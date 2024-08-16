@@ -1,0 +1,23 @@
+---
+title: "Site Map"
+listing: 
+  - id: listing1
+    type: table
+    sort:
+      - "date"
+      - "title desc"
+    fields: [image, date, title, reading-time]
+    categories: true
+    feed: true
+---
+
+::: {.panel-tabset}
+
+## Site Map Listing
+
+:::{#listing1}
+:::
+
+Refer to: <https://quarto.org/docs/websites/website-listings.html> 
+
+:::

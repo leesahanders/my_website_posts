@@ -1,0 +1,50 @@
+[
+  {
+    "listing": "/site_map.html",
+    "items": [
+      "/posts/battlebots 2021.html",
+      "/posts/resin.html",
+      "/posts/quarto.html",
+      "/posts/ai_art.html",
+      "/posts/ojs_lyme.html",
+      "/posts/chatbot.html",
+      "/posts/maverick soft topper.html",
+      "/posts/vortico rockets.html",
+      "/posts/maverick cubby holder.html",
+      "/posts/kettle automation.html",
+      "/index.html",
+      "/posts.html",
+      "/about.html"
+    ]
+  },
+  {
+    "listing": "/index.html",
+    "items": [
+      "/posts/kettle automation.html",
+      "/posts/maverick cubby holder.html",
+      "/posts/vortico rockets.html",
+      "/posts/maverick soft topper.html",
+      "/posts/chatbot.html",
+      "/posts/ojs_lyme.html",
+      "/posts/ai_art.html",
+      "/posts/quarto.html",
+      "/posts/resin.html",
+      "/posts/battlebots 2021.html"
+    ]
+  },
+  {
+    "listing": "/posts.html",
+    "items": [
+      "/posts/kettle automation.html",
+      "/posts/maverick cubby holder.html",
+      "/posts/vortico rockets.html",
+      "/posts/maverick soft topper.html",
+      "/posts/chatbot.html",
+      "/posts/ojs_lyme.html",
+      "/posts/ai_art.html",
+      "/posts/quarto.html",
+      "/posts/resin.html",
+      "/posts/battlebots 2021.html"
+    ]
+  }
+]

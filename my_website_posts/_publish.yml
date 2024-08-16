@@ -1,0 +1,4 @@
+- source: project
+  quarto-pub:
+    - id: 33b6ae91-e1b2-4feb-aebe-c533edef1d1b
+      url: 'https://questionable.quarto.pub/posts'

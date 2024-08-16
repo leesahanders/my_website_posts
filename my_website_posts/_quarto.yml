@@ -1,0 +1,42 @@
+project:
+  type: website
+
+website:
+  site-url: "https://questionable.quarto.pub/blog/"
+  title: "Lisa Anders - questionable.quarto"
+  description: "Making the most out of data"
+  navbar:
+    title: "<span class='icon-upper'>LISA ANDERS</span><span class='icon-sep'></span><span class='icon-lower'>questionable.quarto</span>"
+    left: 
+      - text: "Home"
+        href: index.qmd
+      - text: "Stuff"
+        icon: fa-database
+        menu:
+          - text: "Blog / Projects"
+            href: index.qmd
+          - text: "Lists"
+            href: https://questionable.quarto.pub/blog/lists.html        
+          - text: "Presentations"
+            href: https://questionable.quarto.pub/blog/presentations.html  
+          - text: "Recipes"
+            href: https://questionable.quarto.pub/recipes/
+          - text: "Technical writeups"
+            href: https://questionable.quarto.pub/blog/work.html
+      - text: "Blog / Projects"
+        href: index.qmd
+
+    right:
+      - text: "About"
+        href: https://questionable.quarto.pub/blog/about.html
+      - text: "Site Map"
+        href: https://questionable.quarto.pub/blog/site_map.html
+      - icon: github
+        href: https://github.com/leesahanders/my_website
+format:
+  html:
+    theme: 
+      light: [litera, custom_theme.scss]
+      dark: [vapor, theme-dark.scss]
+    css: styles.css
+
