@@ -10,7 +10,526 @@
 <atom:link href="https://questionable.quarto.pub/posts/site_map.xml" rel="self" type="application/rss+xml"/>
 <description>Making the most out of data</description>
 <generator>quarto-1.4.550</generator>
-<lastBuildDate>Wed, 01 May 2024 06:00:00 GMT</lastBuildDate>
+<lastBuildDate>Sat, 05 Jul 2025 06:00:00 GMT</lastBuildDate>
+<item>
+  <title>Using LLM’s to make a text adventure</title>
+  <dc:creator>Lisa </dc:creator>
+  <link>https://questionable.quarto.pub/posts/posts/text-adventure-space.html</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<section id="project-nightfall-game" class="level2">
+<h2 class="anchored" data-anchor-id="project-nightfall-game">Project Nightfall Game</h2>
+<!---{{< include files/bus-jump.html >}}-->
+<iframe src="files/text-adventure-space.html" width="100%" height="1000px" <!--="" adjust="" as="" needed="" --="">
+    frameborder="0"
+    scrolling="no"
+    allowfullscreen
+></iframe>
+</section>
+<section id="background" class="level2">
+<h2 class="anchored" data-anchor-id="background">Background</h2>
+<p>Various prompts and refinement: `</p>
+<pre><code>Make a text based game that can be accessed from a phone as an application using only open source software. The game should include a puzzle that the player needs to solve and some horror and science fiction themeing. The game should be set in the early days of the space program with the user playing the role of a spy exploring files from the members of the Soviet Russia's space program. The player should have a limited set of files they can access at first. When the player accesses a file it should give the a clue for the next file to access. Not all files should give clues, and some clues will need to be combined across multiple files. The game should have a dramatic ending.
+
+It's too hard to access files. Each file should be accessed with "access &lt;file ID&gt;" but the file ID should be very simple, less than 5 characters
+
+Add a way for the player to see which files they have viewed, which files they haven't viewed, and which files have remaining clues that they haven't acted on (haven't viewed the file that that file has a clue for)
+
+Can you move the text submission field above the list of available files, and sort the available files in descending order
+
+Instead of "access" can the command be "read"
+
+After the player has "read" a file the content of the file should be included below in the "available files" list as a collapsible field. By default it should be collapsed, but should be able to be expanded if the player clicks on it
+
+The content of the message isn't showing up under available files in the expandable field. Please make sure that after the file has been read for the first time the content shows up under the available fields list in an expandable field.
+
+Change the solution to the final puzzle to "The abyss virus is in me" making the reveal as dramatic as possible. Keep as much of the original content as possible.</code></pre>
+
+
+</section>
+
+ ]]></description>
+  <category>code</category>
+  <category>games</category>
+  <guid>https://questionable.quarto.pub/posts/posts/text-adventure-space.html</guid>
+  <pubDate>Sat, 05 Jul 2025 06:00:00 GMT</pubDate>
+  <media:content url="https://questionable.quarto.pub/posts/posts/img/text-adventure-space.png" medium="image" type="image/png" height="118" width="144"/>
+</item>
+<item>
+  <title>Using LLM’s to make a jump game</title>
+  <dc:creator>Lisa </dc:creator>
+  <link>https://questionable.quarto.pub/posts/posts/bus-jump.html</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<section id="denver-rtd-magic-bus-jump" class="level2">
+<h2 class="anchored" data-anchor-id="denver-rtd-magic-bus-jump">Denver RTD Magic Bus Jump</h2>
+<!---{{< include files/bus-jump.html >}}-->
+<iframe src="files/bus-jump.html" width="100%" height="500px" <!--="" adjust="" as="" needed="" --="">
+    frameborder="0"
+    scrolling="no"
+    allowfullscreen
+></iframe>
+</section>
+<section id="background" class="level2">
+<h2 class="anchored" data-anchor-id="background">Background</h2>
+<p>I wanted to play around with making a mini game, using LLM’s to help make the code using react and html.</p>
+
+
+</section>
+
+ ]]></description>
+  <category>code</category>
+  <category>games</category>
+  <guid>https://questionable.quarto.pub/posts/posts/bus-jump.html</guid>
+  <pubDate>Sat, 05 Jul 2025 06:00:00 GMT</pubDate>
+  <media:content url="https://questionable.quarto.pub/posts/posts/img/bus-jump.png" medium="image" type="image/png" height="97" width="144"/>
+</item>
+<item>
+  <title>Using LLM’s to make a dice roller</title>
+  <dc:creator>Lisa </dc:creator>
+  <link>https://questionable.quarto.pub/posts/posts/dice-roller.html</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<section id="the-dice-roller" class="level2">
+<h2 class="anchored" data-anchor-id="the-dice-roller">The Dice Roller</h2>
+&lt;!DOCTYPE html&gt;
+
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+Universal Dice Roller
+</title>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- Google Fonts - Inter -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet">
+<style>
+        /* Custom CSS for the spinning animation */
+        @keyframes spin-fast {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .animate-spin-fast {
+            animation: spin-fast 0.3s linear infinite;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+
+
+<div id="root">
+
+</div>
+<!-- React and ReactDOM CDNs -->
+<script crossorigin="" src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin="" src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<!-- Babel CDN for JSX transformation -->
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script type="text/babel">
+        // Main App component for the dice roller application
+        const App = () => {
+            // Define available dice types and their maximum values
+            const diceTypes = [
+                { type: 'd4', max: 4 },
+                { type: 'd6', max: 6 },
+                { type: 'd8', max: 8 },
+                { type: 'd12', max: 12 },
+                { type: 'd20', max: 20 },
+                { type: 'd100', max: 100 },
+            ];
+
+            // State for the currently selected dice type (default to d6)
+            const [selectedDiceType, setSelectedDiceType] = React.useState(diceTypes[1]); // d6 is at index 1
+            // State to store the current value of the dice
+            const [diceValue, setDiceValue] = React.useState(1);
+            // State to control the rolling animation
+            const [isRolling, setIsRolling] = React.useState(false);
+            // State to store the LLM-generated dice insight
+            const [diceInsight, setDiceInsight] = React.useState('');
+            // State to control the loading indicator for the LLM insight
+            const [isLoadingInsight, setIsLoadingInsight] = React.useState(false);
+            // State to store any error messages from the LLM API call
+            const [insightError, setInsightError] = React.useState('');
+
+            /**
+             * Renders the face of the dice. Now always shows the number.
+             * @param {number} value The current dice value.
+             * @param {string} type The type of dice (e.g., 'd6', 'd20').
+             * @returns {JSX.Element} The JSX element representing the dice face.
+             */
+            const renderDiceFace = (value, type) => {
+                // For all dice types, display the number directly
+                return (
+                    <span className="text-5xl md:text-6xl font-bold text-white drop-shadow-md">
+                        {value}
+                    </span>
+                );
+            };
+
+            /**
+             * Handles the dice rolling logic.
+             * Generates a random number based on the selected dice type.
+             * Includes a visual rolling animation.
+             */
+            const rollDice = () => {
+                if (isRolling) return; // Prevent multiple rolls while already rolling
+
+                setIsRolling(true); // Start the rolling animation
+                setDiceInsight(''); // Clear previous insight
+                setInsightError(''); // Clear previous error
+
+                const animationDuration = 1500; // 1.5 seconds for the main animation
+
+                // After the main animation duration, calculate the final value
+                setTimeout(() => {
+                    const finalValue = Math.floor(Math.random() * selectedDiceType.max) + 1; // Generate random number
+                    setDiceValue(finalValue); // Update dice value to the final result
+
+                    // Introduce a tiny additional delay to ensure React has a chance to update the DOM
+                    // with the new diceValue BEFORE the 'isRolling' overlay is removed.
+                    setTimeout(() => {
+                        setIsRolling(false); // End the rolling animation, remove overlay
+                    }, 50); // Small additional delay (e.g., 50ms)
+                }, animationDuration);
+            };
+
+            /**
+             * Calls the Gemini API to get an insight based on the dice value and type.
+             */
+            const getDiceInsight = async () => {
+                setIsLoadingInsight(true);
+                setInsightError('');
+                setDiceInsight(''); // Clear previous insight
+
+                const prompt = `Provide a very short, whimsical, and positive interpretation or fortune for a roll of ${diceValue} on a ${selectedDiceType.type} dice. Make it sound like a fun, lighthearted prediction. Keep it to one sentence.`;
+
+                let chatHistory = [];
+                chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+                const payload = { contents: chatHistory };
+                const apiKey = ""; // Canvas will automatically provide the API key at runtime
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(`API error: ${response.status} - ${errorData.error?.message || 'Unknown error'}`);
+                    }
+
+                    const result = await response.json();
+
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        const text = result.candidates[0].content.parts[0].text;
+                        setDiceInsight(text);
+                    } else {
+                        setInsightError("Could not get a valid insight from the AI. Please try again.");
+                        console.error("Unexpected API response structure:", result);
+                    }
+                } catch (error) {
+                    setInsightError(`Failed to get insight: ${error.message}`);
+                    console.error("Error fetching dice insight:", error);
+                } finally {
+                    setIsLoadingInsight(false);
+                }
+            };
+
+            // Initial roll when the component mounts or dice type changes
+            React.useEffect(() => {
+                rollDice();
+            }, [selectedDiceType]); // Re-roll when selectedDiceType changes
+
+            return (
+                <div className="min-h-screen bg-gradient-to-br from-indigo-800 to-purple-900 flex flex-col items-center justify-center p-4 font-inter text-white">
+                    <h1 className="text-4xl md:text-5xl font-bold mb-8 text-center drop-shadow-lg">
+                        Universal Dice Roller
+                    </h1>
+
+                    {/* Dice Type Selection Buttons */}
+                    <div className="flex flex-wrap justify-center gap-2 mb-8 max-w-full">
+                        {diceTypes.map((dice) => (
+                            <button
+                                key={dice.type}
+                                onClick={() => setSelectedDiceType(dice)}
+                                className={`
+                                    px-4 py-2 rounded-full font-semibold text-sm md:text-base
+                                    transition-all duration-200 ease-in-out
+                                    ${selectedDiceType.type === dice.type
+                                        ? 'bg-emerald-500 text-white shadow-md'
+                                        : 'bg-gray-700 text-gray-300 hover:bg-gray-600 hover:text-white'
+                                    }
+                                    focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-opacity-75
+                                `}
+                                disabled={isRolling || isLoadingInsight}
+                            >
+                                {dice.type.toUpperCase()}
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* Dice Visualization Component */}
+                    <div className={`
+                        relative w-40 h-40 md:w-48 md:h-48 bg-red-600 rounded-2xl shadow-2xl flex items-center justify-center
+                        transition-transform duration-300 ease-out
+                        ${isRolling ? 'animate-spin-fast' : 'transform rotate-0'}
+                    `}>
+                        {/* Visual dice face is rendered only when not rolling */}
+                        {!isRolling && renderDiceFace(diceValue, selectedDiceType.type)}
+                        {/* Overlay for rolling effect */}
+                        {isRolling && (
+                            <div className="absolute inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center rounded-2xl">
+                                <span className="text-3xl font-bold text-white animate-pulse">Rolling...</span>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Result Display Component */}
+                    <div className="mt-8 text-6xl md:text-7xl font-extrabold text-white drop-shadow-lg">
+                        {diceValue}
+                    </div>
+
+                    {/* Roll Button */}
+                    <button
+                        onClick={rollDice}
+                        disabled={isRolling || isLoadingInsight} // Disable button while rolling or getting insight
+                        className={`
+                            mt-12 px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xl rounded-full shadow-lg
+                            transition-all duration-300 ease-in-out transform
+                            ${isRolling || isLoadingInsight ? 'opacity-70 cursor-not-allowed' : 'hover:scale-105 active:scale-95'}
+                            focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50
+                            relative overflow-hidden
+                        `}
+                    >
+                        {isRolling ? (
+                            <span className="flex items-center">
+                                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                Rolling...
+                            </span>
+                        ) : (
+                            `Roll ${selectedDiceType.type.toUpperCase()}`
+                        )}
+                        {/* Button hover effect */}
+                        <span className="absolute inset-0 bg-white opacity-0 transition-opacity duration-300 rounded-full group-hover:opacity-10"></span>
+                    </button>
+
+                    {/* Gemini API Insight Button */}
+                    <button
+                        onClick={getDiceInsight}
+                        disabled={isRolling || isLoadingInsight} // Disable while rolling or loading insight
+                        className={`
+                            mt-4 px-8 py-4 bg-purple-600 hover:bg-purple-700 text-white font-bold text-xl rounded-full shadow-lg
+                            transition-all duration-300 ease-in-out transform
+                            ${isRolling || isLoadingInsight ? 'opacity-70 cursor-not-allowed' : 'hover:scale-105 active:scale-95'}
+                            focus:outline-none focus:ring-4 focus:ring-purple-500 focus:ring-opacity-50
+                            relative overflow-hidden
+                        `}
+                    >
+                        {isLoadingInsight ? (
+                            <span className="flex items-center">
+                                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                Getting Insight...
+                            </span>
+                        ) : (
+                            '✨ Get Dice Insight ✨'
+                        )}
+                        <span className="absolute inset-0 bg-white opacity-0 transition-opacity duration-300 rounded-full group-hover:opacity-10"></span>
+                    </button>
+
+                    {/* Display Dice Insight or Error */}
+                    {(diceInsight || insightError) && (
+                        <div className="mt-8 p-6 bg-gray-800 bg-opacity-70 rounded-xl shadow-xl text-center max-w-md mx-auto">
+                            {diceInsight && (
+                                <p className="text-lg md:text-xl text-yellow-300 font-semibold italic">
+                                    "{diceInsight}"
+                                </p>
+                            )}
+                            {insightError && (
+                                <p className="text-lg md:text-xl text-red-400 font-semibold">
+                                    Error: {insightError}
+                                </p>
+                            )}
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        // Render the App component into the 'root' div
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+
+
+</section>
+<section id="background" class="level2">
+<h2 class="anchored" data-anchor-id="background">Background</h2>
+<p>I wanted to make a simple dice roller for using when I’m on the road and want to play an RPG with a friend.</p>
+<p>Started with this prompt, trying to be detailed and specific: “Reply with the instructions to make a phone application using open source software. The application should be simple and simulate rolling a d6 dice. It should have a UI component that visualizes rolling a dice and a component that displays the final number. Check that the rolls are truly random. Explain the components of the application and how a user can run them. Respond as if you were teaching a university course on app design.”</p>
+<p>It told us this about the application:</p>
+<blockquote class="blockquote">
+<p>Hello class, and welcome to this session on app design! Today, we’re going to tackle a fundamental concept: building a simple, interactive application that simulates a d6 dice roll. This project will introduce you to core principles of front-end development, user interface design, and the importance of randomness in simulations.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>We’ll be using React, a popular open-source JavaScript library for building user interfaces, along with standard HTML and CSS (specifically, Tailwind CSS for rapid styling). While this will be a web-based application, it’s designed to be fully responsive and can be easily accessed and used on any modern phone browser, giving it the feel of a native app without the complexities of platform-specific development.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>Our application will have two main components:</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>The Dice Visualization Component: This will be a visual representation of a six-sided die, showing the dots corresponding to the rolled number. We’ll make it animate slightly to simulate the “roll.”</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>The Result Display Component: This will clearly show the numerical outcome of the dice roll.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>The Roll Button: An interactive element to trigger the dice roll.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>** Understanding the Application Components**</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>Let’s break down the key parts of this React application:</p>
+</blockquote>
+<blockquote class="blockquote">
+<ol type="1">
+<li><strong><code>App</code> Component:</strong></li>
+</ol>
+</blockquote>
+<blockquote class="blockquote">
+<pre><code>- This is the root component of our application. It's a functional component, which is the modern way to write React components.</code></pre>
+</blockquote>
+<blockquote class="blockquote">
+<pre><code>- **State Management (`useState`):**</code></pre>
+</blockquote>
+<blockquote class="blockquote">
+<pre><code>    - `diceValue`: This state variable holds the current number displayed on the dice. When `setDiceValue` is called, React re-renders the component to show the new number.</code></pre>
+</blockquote>
+<blockquote class="blockquote">
+<pre><code>    - `isRolling`: This boolean state controls the visual "rolling" effect and disables the button during a roll.</code></pre>
+</blockquote>
+<blockquote class="blockquote">
+<pre><code>- **`renderDiceDots(value)` Function:** This helper function is responsible for the visual representation of the dice. It takes the `diceValue` and returns an array of `div` elements, each representing a dot on the dice face. The positioning of these dots is precisely calculated using Tailwind's fractional positioning classes (`top-1/4`, `left-1/2`, etc.) and CSS `transform` for centering. This makes the dice look like an actual die face.</code></pre>
+</blockquote>
+<blockquote class="blockquote">
+<pre><code>- **`rollDice()` Function:**</code></pre>
+</blockquote>
+<blockquote class="blockquote">
+<pre><code>    - This is the core logic for our dice roll.</code></pre>
+</blockquote>
+<blockquote class="blockquote">
+<pre><code>    - **Randomness:** `Math.random()` is used to generate a pseudo-random floating-point number between 0 (inclusive) and 1 (exclusive). We then multiply it by 6, use `Math.floor()` to get an integer between 0 and 5, and add 1 to get a number between 1 and 6. This is a standard and robust way to simulate dice rolls in JavaScript.</code></pre>
+</blockquote>
+<blockquote class="blockquote">
+<pre><code>    - **Simulation of Rolling:** To make the roll feel more dynamic, we use `setInterval` to rapidly change the `diceValue` a few times, giving the impression of the dice tumbling. After a short period, `setTimeout` is used to set the final, truly random value and end the `isRolling` state.</code></pre>
+</blockquote>
+<blockquote class="blockquote">
+<pre><code>    - **Preventing Multiple Rolls:** The `if (isRolling) return;` line ensures that a user cannot spam the roll button while a roll is already in progress, preventing unexpected behavior.</code></pre>
+</blockquote>
+<blockquote class="blockquote">
+<pre><code>- **`useEffect` Hook:** This hook is used to perform side effects in functional components. Here, `useEffect(() =&gt; { rollDice(); }, []);` ensures that a dice roll happens automatically when the application first loads, providing an initial state. The empty dependency array `[]` means this effect only runs once after the initial render.</code></pre>
+</blockquote>
+<blockquote class="blockquote">
+<pre><code>- **JSX (UI Structure):** The `return` statement contains the JSX (JavaScript XML) that defines the structure and appearance of our application.</code></pre>
+</blockquote>
+<blockquote class="blockquote">
+<pre><code>    - **Main Container:** A `div` with `min-h-screen`, `flex` properties, and a gradient background from Tailwind CSS ensures the app fills the screen and centers its content.</code></pre>
+</blockquote>
+<blockquote class="blockquote">
+<pre><code>    - **Dice Display:** A `div` styled as a red square with rounded corners and a shadow represents the dice. It uses `relative` positioning so the dots can be absolutely positioned within it. The `isRolling` state dynamically adds an `animate-spin-fast` class for the visual roll effect and an overlay to show "Rolling...".</code></pre>
+</blockquote>
+<blockquote class="blockquote">
+<pre><code>    - **Result Display:** A large, bold `div` displays the numerical `diceValue`.</code></pre>
+</blockquote>
+<blockquote class="blockquote">
+<pre><code>    - **Roll Button:** A styled button triggers the `rollDice` function. It's disabled when `isRolling` is true and includes a simple loading spinner for better user feedback.</code></pre>
+</blockquote>
+<blockquote class="blockquote">
+<pre><code>- **Tailwind CSS:** We load Tailwind CSS via its CDN. This allows us to use utility classes directly in our JSX to style elements, making the app responsive and visually appealing without writing custom CSS files.</code></pre>
+</blockquote>
+<blockquote class="blockquote">
+<pre><code>- **Custom CSS:** A small `&lt;style&gt;` block is included for the `animate-spin-fast` keyframe animation, as this is a custom animation not directly provided by Tailwind's default classes.</code></pre>
+</blockquote>
+<blockquote class="blockquote">
+<p><strong>Ensuring Randomness</strong></p>
+</blockquote>
+<blockquote class="blockquote">
+<p>The core of our randomness comes from <code>Math.random()</code>. This function generates what is known as <strong>pseudo-random numbers</strong>. This means the numbers are generated by a deterministic algorithm, but they appear random enough for most practical purposes, including this dice rolling simulation. For cryptographic security or highly sensitive scientific simulations, more robust random number generators (RNGs) might be needed, but for an everyday dice app, <code>Math.random()</code> is perfectly adequate and widely accepted. Each roll is independent of the previous one, and over many rolls, you would expect an even distribution of numbers from 1 to 6.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p><strong>How to Run the Application</strong></p>
+</blockquote>
+<blockquote class="blockquote">
+<p>Since this is a web-based React application bundled into a single HTML file, running it is straightforward:</p>
+</blockquote>
+<blockquote class="blockquote">
+<ol type="1">
+<li><strong>Save the Code:</strong> Copy the entire code block provided above and save it as an HTML file (e.g., <code>dice_roller.html</code>). Make sure to include the <code>&lt;!DOCTYPE html&gt;</code> and <code>&lt;html&gt;</code>, <code>&lt;head&gt;</code>, <code>&lt;body&gt;</code> tags around the React app for it to be a complete HTML document.</li>
+</ol>
+</blockquote>
+<blockquote class="blockquote">
+<ol start="2" type="1">
+<li><strong>Open in Browser:</strong></li>
+</ol>
+</blockquote>
+<blockquote class="blockquote">
+<pre><code>- **On Desktop:** Simply double-click the `dice_roller.html` file. It will open in your default web browser.</code></pre>
+</blockquote>
+<blockquote class="blockquote">
+<pre><code>- **On Phone:**</code></pre>
+</blockquote>
+<blockquote class="blockquote">
+<pre><code>    - **Method A (Local Server - Recommended for testing):** If you have Python installed, navigate to the directory where you saved `dice_roller.html` in your terminal and run `python -m http.server`. This will start a local web server (usually on `http://localhost:8000`). You can then access this URL from your phone's browser if both devices are on the same Wi-Fi network (you might need to use your computer's local IP address instead of `localhost`).</code></pre>
+</blockquote>
+<blockquote class="blockquote">
+<pre><code>    - **Method B (Cloud Hosting):** For easier access, you could upload this `dice_roller.html` file to a simple web hosting service (like GitHub Pages, Netlify, Vercel, or even a free static site host). Once hosted, you'll get a URL that you can simply open in your phone's browser.</code></pre>
+</blockquote>
+<blockquote class="blockquote">
+<pre><code>    - **Method C (Direct File Transfer - Less common for web apps):** You could transfer the HTML file directly to your phone's storage and open it with a file browser that supports opening HTML files in a web view. However, this method might have limitations with external CDN scripts.</code></pre>
+</blockquote>
+<blockquote class="blockquote">
+<p>This approach allows you to create a functional and visually appealing application that runs across various devices using widely adopted open-source technologies. It’s a great starting point for understanding how modern web applications are built!</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>In the future consider Progressive Web App (PWA): Learn how to turn this web application into a PWA, allowing users to “install” it to their home screen and even use it offline.</p>
+</blockquote>
+<p>We then had it expand into multiple dice and fixed the issue with the dots not matching the number by having it only show the number: “Now add the ability to switch between dice typea: d4, d6, d8, D12, d20, and d100. The number rolled and the number on the dice don’t match. They should match. Please make it so that all dice roll numbers, not dots. Add a readme that provides: instructions for how to run it, troubleshooting tips, overall architecture, and recommended next steps.”</p>
+
+
+</section>
+
+ ]]></description>
+  <category>code</category>
+  <category>dice</category>
+  <category>games</category>
+  <guid>https://questionable.quarto.pub/posts/posts/dice-roller.html</guid>
+  <pubDate>Sat, 05 Jul 2025 06:00:00 GMT</pubDate>
+  <media:content url="https://questionable.quarto.pub/posts/posts/img/dice-roller.png" medium="image" type="image/png" height="162" width="144"/>
+</item>
 <item>
   <title>Hey Google - make me coffee!</title>
   <dc:creator>Lisa </dc:creator>
@@ -3270,7 +3789,91 @@ font-style: inherit;">"Type"</span>)</span>
 
 <div class="quarto-listing quarto-listing-container-default" id="listing-listing">
 <div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="hardware,code" data-listing-date-sort="1714543200000" data-listing-file-modified-sort="1714582297527" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="317">
+<div class="quarto-post image-right" data-index="0" data-categories="code,games" data-listing-date-sort="1751695200000" data-listing-file-modified-sort="1751755106844" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="58">
+<div class="thumbnail">
+<p><a href="./posts/bus-jump.html" class="no-external"></a></p><a href="./posts/bus-jump.html" class="no-external">
+<p><img src="https://questionable.quarto.pub/posts/posts/img/bus-jump.png" class="thumbnail-image"></p>
+</a><p><a href="./posts/bus-jump.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/bus-jump.html" class="no-external">Using LLM’s to make a jump game</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./posts/bus-jump.html" class="no-external"></a>
+</div>
+</div>
+<div class="metadata">
+<a href="./posts/bus-jump.html" class="no-external">
+<div class="listing-date">
+Jul 5, 2025
+</div>
+<div class="listing-author">
+Lisa
+</div>
+<div class="listing-reading-time">
+1 min
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="1" data-categories="code,dice,games" data-listing-date-sort="1751695200000" data-listing-file-modified-sort="1751754758896" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="9" data-listing-word-count-sort="1740">
+<div class="thumbnail">
+<p><a href="./posts/dice-roller.html" class="no-external"></a></p><a href="./posts/dice-roller.html" class="no-external">
+<p><img src="https://questionable.quarto.pub/posts/posts/img/dice-roller.png" class="thumbnail-image"></p>
+</a><p><a href="./posts/dice-roller.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/dice-roller.html" class="no-external">Using LLM’s to make a dice roller</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./posts/dice-roller.html" class="no-external"></a>
+</div>
+</div>
+<div class="metadata">
+<a href="./posts/dice-roller.html" class="no-external">
+<div class="listing-date">
+Jul 5, 2025
+</div>
+<div class="listing-author">
+Lisa
+</div>
+<div class="listing-reading-time">
+9 min
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="2" data-categories="code,games" data-listing-date-sort="1751695200000" data-listing-file-modified-sort="1751757981614" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="373">
+<div class="thumbnail">
+<p><a href="./posts/text-adventure-space.html" class="no-external"></a></p><a href="./posts/text-adventure-space.html" class="no-external">
+<p><img src="https://questionable.quarto.pub/posts/posts/img/text-adventure-space.png" class="thumbnail-image"></p>
+</a><p><a href="./posts/text-adventure-space.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/text-adventure-space.html" class="no-external">Using LLM’s to make a text adventure</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./posts/text-adventure-space.html" class="no-external"></a>
+</div>
+</div>
+<div class="metadata">
+<a href="./posts/text-adventure-space.html" class="no-external">
+<div class="listing-date">
+Jul 5, 2025
+</div>
+<div class="listing-author">
+Lisa
+</div>
+<div class="listing-reading-time">
+2 min
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="3" data-categories="hardware,code" data-listing-date-sort="1714543200000" data-listing-file-modified-sort="1714582297527" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="317">
 <div class="thumbnail">
 <p><a href="./posts/kettle automation.html" class="no-external"></a></p><a href="./posts/kettle automation.html" class="no-external">
 <p><img src="https://questionable.quarto.pub/posts/posts/img/home-automation.png" class="thumbnail-image"></p>
@@ -3298,7 +3901,7 @@ Lisa
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="1" data-categories="laser-cutting,maverick-mods" data-listing-date-sort="1696485600000" data-listing-file-modified-sort="1696530583355" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="202">
+<div class="quarto-post image-right" data-index="4" data-categories="laser-cutting,maverick-mods" data-listing-date-sort="1696485600000" data-listing-file-modified-sort="1696530583355" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="202">
 <div class="thumbnail">
 <p><a href="./posts/maverick cubby holder.html" class="no-external"></a></p><a href="./posts/maverick cubby holder.html" class="no-external">
 <p><img src="https://questionable.quarto.pub/posts/posts/img/cubby-holder.jpg" class="thumbnail-image"></p>
@@ -3326,7 +3929,7 @@ Lisa
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="2" data-categories="rockets" data-listing-date-sort="1691301600000" data-listing-file-modified-sort="1713567053274" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="69">
+<div class="quarto-post image-right" data-index="5" data-categories="rockets" data-listing-date-sort="1691301600000" data-listing-file-modified-sort="1713567053274" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="69">
 <div class="thumbnail">
 <p><a href="./posts/vortico rockets.html" class="no-external"></a></p><a href="./posts/vortico rockets.html" class="no-external">
 <p><img src="https://questionable.quarto.pub/posts/posts/img/vortico.jpg" class="thumbnail-image"></p>
@@ -3354,7 +3957,7 @@ Lisa
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="3" data-categories="maverick-mods" data-listing-date-sort="1683352800000" data-listing-file-modified-sort="1713566902522" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="78">
+<div class="quarto-post image-right" data-index="6" data-categories="maverick-mods" data-listing-date-sort="1683352800000" data-listing-file-modified-sort="1713566902522" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="78">
 <div class="thumbnail">
 <p><a href="./posts/maverick soft topper.html" class="no-external"></a></p><a href="./posts/maverick soft topper.html" class="no-external">
 <p><img src="https://questionable.quarto.pub/posts/posts/img/maverick_softtopper 3.jpg" class="thumbnail-image"></p>
@@ -3382,7 +3985,7 @@ Lisa
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="4" data-categories="datascience" data-listing-date-sort="1663567200000" data-listing-file-modified-sort="1696525704498" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="793">
+<div class="quarto-post image-right" data-index="7" data-categories="datascience" data-listing-date-sort="1663567200000" data-listing-file-modified-sort="1696525704498" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="793">
 <div class="thumbnail">
 <p><a href="./posts/chatbot.html" class="no-external"></a></p><a href="./posts/chatbot.html" class="no-external">
 <p><img src="https://questionable.quarto.pub/posts/posts/img/Plantey_saturated.jpg" class="thumbnail-image"></p>
@@ -3410,7 +4013,7 @@ Lisa
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="5" data-categories="datascience" data-listing-date-sort="1659592800000" data-listing-file-modified-sort="1713566949143" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="177">
+<div class="quarto-post image-right" data-index="8" data-categories="datascience" data-listing-date-sort="1659592800000" data-listing-file-modified-sort="1713566949143" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="177">
 <div class="thumbnail">
 <p><a href="./posts/ojs_lyme.html" class="no-external"></a></p><a href="./posts/ojs_lyme.html" class="no-external">
 <p><img src="https://questionable.quarto.pub/posts/posts/img/ojs_bar_chart.JPG" class="thumbnail-image"></p>
@@ -3438,7 +4041,7 @@ Lisa
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="6" data-categories="art" data-listing-date-sort="1659506400000" data-listing-file-modified-sort="1713566777906" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="285">
+<div class="quarto-post image-right" data-index="9" data-categories="art" data-listing-date-sort="1659506400000" data-listing-file-modified-sort="1713566777906" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="285">
 <div class="thumbnail">
 <p><a href="./posts/ai_art.html" class="no-external"></a></p><a href="./posts/ai_art.html" class="no-external">
 <p><img src="https://questionable.quarto.pub/posts/posts/img/starryai/placeholder.png" class="thumbnail-image"></p>
@@ -3466,7 +4069,7 @@ Lisa
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="7" data-categories="datascience" data-listing-date-sort="1658988000000" data-listing-file-modified-sort="1713566609782" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="108">
+<div class="quarto-post image-right" data-index="10" data-categories="datascience" data-listing-date-sort="1658988000000" data-listing-file-modified-sort="1713566609782" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="108">
 <div class="thumbnail">
 <p><a href="./posts/quarto.html" class="no-external"></a></p><a href="./posts/quarto.html" class="no-external">
 <p><img src="https://questionable.quarto.pub/posts/posts/img/welcome.jpg" class="thumbnail-image"></p>
@@ -3491,7 +4094,7 @@ Jul 28, 2022
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="8" data-categories="datascience,dice,games" data-listing-date-sort="1617516000000" data-listing-file-modified-sort="1696535148724" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="12" data-listing-word-count-sort="2208">
+<div class="quarto-post image-right" data-index="11" data-categories="datascience,dice,games" data-listing-date-sort="1617516000000" data-listing-file-modified-sort="1696535148724" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="12" data-listing-word-count-sort="2208">
 <div class="thumbnail">
 <p><a href="./posts/resin.html" class="no-external"></a></p><a href="./posts/resin.html" class="no-external">
 <p><img src="https://questionable.quarto.pub/posts/posts/img/resin/PXL_20201008_180539533.MP.jpg" class="thumbnail-image"></p>
@@ -3519,7 +4122,7 @@ Lisa
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="9" data-categories="datascience" data-listing-date-sort="1609743600000" data-listing-file-modified-sort="1696530405442" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="9" data-listing-word-count-sort="1629">
+<div class="quarto-post image-right" data-index="12" data-categories="datascience" data-listing-date-sort="1609743600000" data-listing-file-modified-sort="1696530405442" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="9" data-listing-word-count-sort="1629">
 <div class="thumbnail">
 <p><a href="./posts/battlebots 2021.html" class="no-external"></a></p><a href="./posts/battlebots 2021.html" class="no-external">
 <p><img src="https://questionable.quarto.pub/posts/posts/img/bb/BB.jpg" class="thumbnail-image"></p>
@@ -3553,7 +4156,7 @@ No matching items
 </div>
 </div> ]]></description>
   <guid>https://questionable.quarto.pub/posts/</guid>
-  <pubDate>Fri, 16 Aug 2024 18:43:20 GMT</pubDate>
+  <pubDate>Sat, 05 Jul 2025 23:28:02 GMT</pubDate>
 </item>
 <item>
   <title>Blog posts and random musings</title>
@@ -3571,7 +4174,91 @@ No matching items
 
 <div class="quarto-listing quarto-listing-container-default" id="listing-listing">
 <div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="hardware,code" data-listing-date-sort="1714543200000" data-listing-file-modified-sort="1714582297527" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="317">
+<div class="quarto-post image-right" data-index="0" data-categories="code,games" data-listing-date-sort="1751695200000" data-listing-file-modified-sort="1751755106844" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="58">
+<div class="thumbnail">
+<p><a href="./posts/bus-jump.html" class="no-external"></a></p><a href="./posts/bus-jump.html" class="no-external">
+<p><img src="https://questionable.quarto.pub/posts/posts/img/bus-jump.png" class="thumbnail-image"></p>
+</a><p><a href="./posts/bus-jump.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/bus-jump.html" class="no-external">Using LLM’s to make a jump game</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./posts/bus-jump.html" class="no-external"></a>
+</div>
+</div>
+<div class="metadata">
+<a href="./posts/bus-jump.html" class="no-external">
+<div class="listing-date">
+Jul 5, 2025
+</div>
+<div class="listing-author">
+Lisa
+</div>
+<div class="listing-reading-time">
+1 min
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="1" data-categories="code,dice,games" data-listing-date-sort="1751695200000" data-listing-file-modified-sort="1751754758896" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="9" data-listing-word-count-sort="1740">
+<div class="thumbnail">
+<p><a href="./posts/dice-roller.html" class="no-external"></a></p><a href="./posts/dice-roller.html" class="no-external">
+<p><img src="https://questionable.quarto.pub/posts/posts/img/dice-roller.png" class="thumbnail-image"></p>
+</a><p><a href="./posts/dice-roller.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/dice-roller.html" class="no-external">Using LLM’s to make a dice roller</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./posts/dice-roller.html" class="no-external"></a>
+</div>
+</div>
+<div class="metadata">
+<a href="./posts/dice-roller.html" class="no-external">
+<div class="listing-date">
+Jul 5, 2025
+</div>
+<div class="listing-author">
+Lisa
+</div>
+<div class="listing-reading-time">
+9 min
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="2" data-categories="code,games" data-listing-date-sort="1751695200000" data-listing-file-modified-sort="1751757981614" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="373">
+<div class="thumbnail">
+<p><a href="./posts/text-adventure-space.html" class="no-external"></a></p><a href="./posts/text-adventure-space.html" class="no-external">
+<p><img src="https://questionable.quarto.pub/posts/posts/img/text-adventure-space.png" class="thumbnail-image"></p>
+</a><p><a href="./posts/text-adventure-space.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/text-adventure-space.html" class="no-external">Using LLM’s to make a text adventure</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./posts/text-adventure-space.html" class="no-external"></a>
+</div>
+</div>
+<div class="metadata">
+<a href="./posts/text-adventure-space.html" class="no-external">
+<div class="listing-date">
+Jul 5, 2025
+</div>
+<div class="listing-author">
+Lisa
+</div>
+<div class="listing-reading-time">
+2 min
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="3" data-categories="hardware,code" data-listing-date-sort="1714543200000" data-listing-file-modified-sort="1714582297527" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="317">
 <div class="thumbnail">
 <p><a href="./posts/kettle automation.html" class="no-external"></a></p><a href="./posts/kettle automation.html" class="no-external">
 <p><img src="https://questionable.quarto.pub/posts/posts/img/home-automation.png" class="thumbnail-image"></p>
@@ -3599,7 +4286,7 @@ Lisa
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="1" data-categories="laser-cutting,maverick-mods" data-listing-date-sort="1696485600000" data-listing-file-modified-sort="1696530583355" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="202">
+<div class="quarto-post image-right" data-index="4" data-categories="laser-cutting,maverick-mods" data-listing-date-sort="1696485600000" data-listing-file-modified-sort="1696530583355" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="202">
 <div class="thumbnail">
 <p><a href="./posts/maverick cubby holder.html" class="no-external"></a></p><a href="./posts/maverick cubby holder.html" class="no-external">
 <p><img src="https://questionable.quarto.pub/posts/posts/img/cubby-holder.jpg" class="thumbnail-image"></p>
@@ -3627,7 +4314,7 @@ Lisa
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="2" data-categories="rockets" data-listing-date-sort="1691301600000" data-listing-file-modified-sort="1713567053274" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="69">
+<div class="quarto-post image-right" data-index="5" data-categories="rockets" data-listing-date-sort="1691301600000" data-listing-file-modified-sort="1713567053274" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="69">
 <div class="thumbnail">
 <p><a href="./posts/vortico rockets.html" class="no-external"></a></p><a href="./posts/vortico rockets.html" class="no-external">
 <p><img src="https://questionable.quarto.pub/posts/posts/img/vortico.jpg" class="thumbnail-image"></p>
@@ -3655,7 +4342,7 @@ Lisa
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="3" data-categories="maverick-mods" data-listing-date-sort="1683352800000" data-listing-file-modified-sort="1713566902522" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="78">
+<div class="quarto-post image-right" data-index="6" data-categories="maverick-mods" data-listing-date-sort="1683352800000" data-listing-file-modified-sort="1713566902522" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="78">
 <div class="thumbnail">
 <p><a href="./posts/maverick soft topper.html" class="no-external"></a></p><a href="./posts/maverick soft topper.html" class="no-external">
 <p><img src="https://questionable.quarto.pub/posts/posts/img/maverick_softtopper 3.jpg" class="thumbnail-image"></p>
@@ -3683,7 +4370,7 @@ Lisa
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="4" data-categories="datascience" data-listing-date-sort="1663567200000" data-listing-file-modified-sort="1696525704498" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="793">
+<div class="quarto-post image-right" data-index="7" data-categories="datascience" data-listing-date-sort="1663567200000" data-listing-file-modified-sort="1696525704498" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="793">
 <div class="thumbnail">
 <p><a href="./posts/chatbot.html" class="no-external"></a></p><a href="./posts/chatbot.html" class="no-external">
 <p><img src="https://questionable.quarto.pub/posts/posts/img/Plantey_saturated.jpg" class="thumbnail-image"></p>
@@ -3711,7 +4398,7 @@ Lisa
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="5" data-categories="datascience" data-listing-date-sort="1659592800000" data-listing-file-modified-sort="1713566949143" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="177">
+<div class="quarto-post image-right" data-index="8" data-categories="datascience" data-listing-date-sort="1659592800000" data-listing-file-modified-sort="1713566949143" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="177">
 <div class="thumbnail">
 <p><a href="./posts/ojs_lyme.html" class="no-external"></a></p><a href="./posts/ojs_lyme.html" class="no-external">
 <p><img src="https://questionable.quarto.pub/posts/posts/img/ojs_bar_chart.JPG" class="thumbnail-image"></p>
@@ -3739,7 +4426,7 @@ Lisa
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="6" data-categories="art" data-listing-date-sort="1659506400000" data-listing-file-modified-sort="1713566777906" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="285">
+<div class="quarto-post image-right" data-index="9" data-categories="art" data-listing-date-sort="1659506400000" data-listing-file-modified-sort="1713566777906" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="285">
 <div class="thumbnail">
 <p><a href="./posts/ai_art.html" class="no-external"></a></p><a href="./posts/ai_art.html" class="no-external">
 <p><img src="https://questionable.quarto.pub/posts/posts/img/starryai/placeholder.png" class="thumbnail-image"></p>
@@ -3767,7 +4454,7 @@ Lisa
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="7" data-categories="datascience" data-listing-date-sort="1658988000000" data-listing-file-modified-sort="1713566609782" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="108">
+<div class="quarto-post image-right" data-index="10" data-categories="datascience" data-listing-date-sort="1658988000000" data-listing-file-modified-sort="1713566609782" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="108">
 <div class="thumbnail">
 <p><a href="./posts/quarto.html" class="no-external"></a></p><a href="./posts/quarto.html" class="no-external">
 <p><img src="https://questionable.quarto.pub/posts/posts/img/welcome.jpg" class="thumbnail-image"></p>
@@ -3792,7 +4479,7 @@ Jul 28, 2022
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="8" data-categories="datascience,dice,games" data-listing-date-sort="1617516000000" data-listing-file-modified-sort="1696535148724" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="12" data-listing-word-count-sort="2208">
+<div class="quarto-post image-right" data-index="11" data-categories="datascience,dice,games" data-listing-date-sort="1617516000000" data-listing-file-modified-sort="1696535148724" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="12" data-listing-word-count-sort="2208">
 <div class="thumbnail">
 <p><a href="./posts/resin.html" class="no-external"></a></p><a href="./posts/resin.html" class="no-external">
 <p><img src="https://questionable.quarto.pub/posts/posts/img/resin/PXL_20201008_180539533.MP.jpg" class="thumbnail-image"></p>
@@ -3820,7 +4507,7 @@ Lisa
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="9" data-categories="datascience" data-listing-date-sort="1609743600000" data-listing-file-modified-sort="1696530405442" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="9" data-listing-word-count-sort="1629">
+<div class="quarto-post image-right" data-index="12" data-categories="datascience" data-listing-date-sort="1609743600000" data-listing-file-modified-sort="1696530405442" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="9" data-listing-word-count-sort="1629">
 <div class="thumbnail">
 <p><a href="./posts/battlebots 2021.html" class="no-external"></a></p><a href="./posts/battlebots 2021.html" class="no-external">
 <p><img src="https://questionable.quarto.pub/posts/posts/img/bb/BB.jpg" class="thumbnail-image"></p>
@@ -3854,7 +4541,7 @@ No matching items
 </div>
 </div> ]]></description>
   <guid>https://questionable.quarto.pub/posts/posts.html</guid>
-  <pubDate>Fri, 16 Aug 2024 18:43:20 GMT</pubDate>
+  <pubDate>Sat, 05 Jul 2025 23:28:02 GMT</pubDate>
 </item>
 <item>
   <title>About</title>
@@ -3868,7 +4555,7 @@ No matching items
 
  ]]></description>
   <guid>https://questionable.quarto.pub/posts/about.html</guid>
-  <pubDate>Fri, 16 Aug 2024 18:43:20 GMT</pubDate>
+  <pubDate>Sat, 05 Jul 2025 23:28:02 GMT</pubDate>
   <media:content url="https://questionable.quarto.pub/posts/images/Rocinante.jpg" medium="image" type="image/jpeg"/>
 </item>
 </channel>

@@ -1,0 +1,41 @@
+---
+title: "Using LLM's to make a jump game"
+description: ""
+author: "Lisa"
+date: "2025-07-05"
+format:
+  html:
+    code-fold: true
+    code-summary: "Show the code"
+editor: source
+image: "img/bus-jump.png"
+draft: false
+freeze: true
+filters:
+   - lightbox
+lightbox: auto
+categories:
+  - code
+  - games
+---
+
+## Denver RTD Magic Bus Jump
+
+<!---{{< include files/bus-jump.html >}}-->
+
+```{=html}
+<iframe
+    src="files/bus-jump.html"
+    width="100%"
+    height="500px"  <!-- Adjust height as needed -->
+    frameborder="0"
+    scrolling="no"
+    allowfullscreen
+></iframe>
+```
+
+## Background 
+
+I wanted to play around with making a mini game, using LLM's to help make the code using react and html. 
+
+

@@ -1,0 +1,122 @@
+---
+title: "Using LLM's to make a dice roller"
+description: ""
+author: "Lisa"
+date: "2025-07-05"
+format:
+  html:
+    code-fold: true
+    code-summary: "Show the code"
+editor: source
+image: "img/dice-roller.png"
+draft: false
+freeze: true
+filters:
+   - lightbox
+lightbox: auto
+categories:
+  - code
+  - dice
+  - games
+---
+
+## The Dice Roller
+
+{{< include files/dice.html >}}
+
+
+## Background
+
+I wanted to make a simple dice roller for using when I'm on the road and want to play an RPG with a friend. 
+
+Started with this prompt, trying to be detailed and specific: "Reply with the instructions to make a phone application using open source software. The application should be simple and simulate rolling a d6 dice. It should have a UI component that visualizes rolling a dice and a component that displays the final number. Check that the rolls are truly random. Explain the components of the application and how a user can run them. Respond as if you were teaching a university course on app design."
+
+It told us this about the application: 
+
+> Hello class, and welcome to this session on app design! Today, we're going to tackle a fundamental concept: building a simple, interactive application that simulates a d6 dice roll. This project will introduce you to core principles of front-end development, user interface design, and the importance of randomness in simulations.
+
+> We'll be using React, a popular open-source JavaScript library for building user interfaces, along with standard HTML and CSS (specifically, Tailwind CSS for rapid styling). While this will be a web-based application, it's designed to be fully responsive and can be easily accessed and used on any modern phone browser, giving it the feel of a native app without the complexities of platform-specific development.
+
+> Our application will have two main components:
+
+> The Dice Visualization Component: This will be a visual representation of a six-sided die, showing the dots corresponding to the rolled number. We'll make it animate slightly to simulate the "roll."
+
+> The Result Display Component: This will clearly show the numerical outcome of the dice roll.
+
+> The Roll Button: An interactive element to trigger the dice roll.
+
+> ** Understanding the Application Components**
+
+> Let's break down the key parts of this React application:
+
+> 1. **`App` Component:**
+    
+>     - This is the root component of our application. It's a functional component, which is the modern way to write React components.
+        
+>     - **State Management (`useState`):**
+        
+>         - `diceValue`: This state variable holds the current number displayed on the dice. When `setDiceValue` is called, React re-renders the component to show the new number.
+            
+>         - `isRolling`: This boolean state controls the visual "rolling" effect and disables the button during a roll.
+            
+>     - **`renderDiceDots(value)` Function:** This helper function is responsible for the visual representation of the dice. It takes the `diceValue` and returns an array of `div` elements, each representing a dot on the dice face. The positioning of these dots is precisely calculated using Tailwind's fractional positioning classes (`top-1/4`, `left-1/2`, etc.) and CSS `transform` for centering. This makes the dice look like an actual die face.
+        
+>     - **`rollDice()` Function:**
+        
+>         - This is the core logic for our dice roll.
+            
+>         - **Randomness:** `Math.random()` is used to generate a pseudo-random floating-point number between 0 (inclusive) and 1 (exclusive). We then multiply it by 6, use `Math.floor()` to get an integer between 0 and 5, and add 1 to get a number between 1 and 6. This is a standard and robust way to simulate dice rolls in JavaScript.
+            
+>         - **Simulation of Rolling:** To make the roll feel more dynamic, we use `setInterval` to rapidly change the `diceValue` a few times, giving the impression of the dice tumbling. After a short period, `setTimeout` is used to set the final, truly random value and end the `isRolling` state.
+            
+>         - **Preventing Multiple Rolls:** The `if (isRolling) return;` line ensures that a user cannot spam the roll button while a roll is already in progress, preventing unexpected behavior.
+            
+>     - **`useEffect` Hook:** This hook is used to perform side effects in functional components. Here, `useEffect(() => { rollDice(); }, []);` ensures that a dice roll happens automatically when the application first loads, providing an initial state. The empty dependency array `[]` means this effect only runs once after the initial render.
+        
+>     - **JSX (UI Structure):** The `return` statement contains the JSX (JavaScript XML) that defines the structure and appearance of our application.
+        
+>         - **Main Container:** A `div` with `min-h-screen`, `flex` properties, and a gradient background from Tailwind CSS ensures the app fills the screen and centers its content.
+            
+>         - **Dice Display:** A `div` styled as a red square with rounded corners and a shadow represents the dice. It uses `relative` positioning so the dots can be absolutely positioned within it. The `isRolling` state dynamically adds an `animate-spin-fast` class for the visual roll effect and an overlay to show "Rolling...".
+            
+>         - **Result Display:** A large, bold `div` displays the numerical `diceValue`.
+            
+>         - **Roll Button:** A styled button triggers the `rollDice` function. It's disabled when `isRolling` is true and includes a simple loading spinner for better user feedback.
+            
+>     - **Tailwind CSS:** We load Tailwind CSS via its CDN. This allows us to use utility classes directly in our JSX to style elements, making the app responsive and visually appealing without writing custom CSS files.
+        
+>     - **Custom CSS:** A small `<style>` block is included for the `animate-spin-fast` keyframe animation, as this is a custom animation not directly provided by Tailwind's default classes.
+        
+
+> **Ensuring Randomness**
+
+> The core of our randomness comes from `Math.random()`. This function generates what is known as **pseudo-random numbers**. This means the numbers are generated by a deterministic algorithm, but they appear random enough for most practical purposes, including this dice rolling simulation. For cryptographic security or highly sensitive scientific simulations, more robust random number generators (RNGs) might be needed, but for an everyday dice app, `Math.random()` is perfectly adequate and widely accepted. Each roll is independent of the previous one, and over many rolls, you would expect an even distribution of numbers from 1 to 6.
+
+> **How to Run the Application**
+
+> Since this is a web-based React application bundled into a single HTML file, running it is straightforward:
+
+> 1. **Save the Code:** Copy the entire code block provided above and save it as an HTML file (e.g., `dice_roller.html`). Make sure to include the `<!DOCTYPE html>` and `<html>`, `<head>`, `<body>` tags around the React app for it to be a complete HTML document.
+
+
+> 2. **Open in Browser:**
+    
+>     - **On Desktop:** Simply double-click the `dice_roller.html` file. It will open in your default web browser.
+        
+>     - **On Phone:**
+        
+>         - **Method A (Local Server - Recommended for testing):** If you have Python installed, navigate to the directory where you saved `dice_roller.html` in your terminal and run `python -m http.server`. This will start a local web server (usually on `http://localhost:8000`). You can then access this URL from your phone's browser if both devices are on the same Wi-Fi network (you might need to use your computer's local IP address instead of `localhost`).
+            
+>         - **Method B (Cloud Hosting):** For easier access, you could upload this `dice_roller.html` file to a simple web hosting service (like GitHub Pages, Netlify, Vercel, or even a free static site host). Once hosted, you'll get a URL that you can simply open in your phone's browser.
+            
+>         - **Method C (Direct File Transfer - Less common for web apps):** You could transfer the HTML file directly to your phone's storage and open it with a file browser that supports opening HTML files in a web view. However, this method might have limitations with external CDN scripts.
+            
+
+> This approach allows you to create a functional and visually appealing application that runs across various devices using widely adopted open-source technologies. It's a great starting point for understanding how modern web applications are built!
+
+
+> In the future consider Progressive Web App (PWA): Learn how to turn this web application into a PWA, allowing users to "install" it to their home screen and even use it offline.
+
+We then had it expand into multiple dice and fixed the issue with the dots not matching the number by having it only show the number: "Now add the ability to switch between dice typea: d4, d6, d8, D12, d20, and d100. The number rolled and the number on the dice don't match. They should match. Please make it so that all dice roll numbers, not dots. Add a readme that provides: instructions for how to run it, troubleshooting tips, overall architecture, and recommended next steps."
+
+

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universal Dice Roller</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom CSS for the spinning animation */
+        @keyframes spin-fast {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .animate-spin-fast {
+            animation: spin-fast 0.3s linear infinite;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <!-- React and ReactDOM CDNs -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel CDN for JSX transformation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <script type="text/babel">
+        // Main App component for the dice roller application
+        const App = () => {
+            // Define available dice types and their maximum values
+            const diceTypes = [
+                { type: 'd4', max: 4 },
+                { type: 'd6', max: 6 },
+                { type: 'd8', max: 8 },
+                { type: 'd12', max: 12 },
+                { type: 'd20', max: 20 },
+                { type: 'd100', max: 100 },
+            ];
+
+            // State for the currently selected dice type (default to d6)
+            const [selectedDiceType, setSelectedDiceType] = React.useState(diceTypes[1]); // d6 is at index 1
+            // State to store the current value of the dice
+            const [diceValue, setDiceValue] = React.useState(1);
+            // State to control the rolling animation
+            const [isRolling, setIsRolling] = React.useState(false);
+            // State to store the LLM-generated dice insight
+            const [diceInsight, setDiceInsight] = React.useState('');
+            // State to control the loading indicator for the LLM insight
+            const [isLoadingInsight, setIsLoadingInsight] = React.useState(false);
+            // State to store any error messages from the LLM API call
+            const [insightError, setInsightError] = React.useState('');
+
+            /**
+             * Renders the face of the dice. Now always shows the number.
+             * @param {number} value The current dice value.
+             * @param {string} type The type of dice (e.g., 'd6', 'd20').
+             * @returns {JSX.Element} The JSX element representing the dice face.
+             */
+            const renderDiceFace = (value, type) => {
+                // For all dice types, display the number directly
+                return (
+                    <span className="text-5xl md:text-6xl font-bold text-white drop-shadow-md">
+                        {value}
+                    </span>
+                );
+            };
+
+            /**
+             * Handles the dice rolling logic.
+             * Generates a random number based on the selected dice type.
+             * Includes a visual rolling animation.
+             */
+            const rollDice = () => {
+                if (isRolling) return; // Prevent multiple rolls while already rolling
+
+                setIsRolling(true); // Start the rolling animation
+                setDiceInsight(''); // Clear previous insight
+                setInsightError(''); // Clear previous error
+
+                const animationDuration = 1500; // 1.5 seconds for the main animation
+
+                // After the main animation duration, calculate the final value
+                setTimeout(() => {
+                    const finalValue = Math.floor(Math.random() * selectedDiceType.max) + 1; // Generate random number
+                    setDiceValue(finalValue); // Update dice value to the final result
+
+                    // Introduce a tiny additional delay to ensure React has a chance to update the DOM
+                    // with the new diceValue BEFORE the 'isRolling' overlay is removed.
+                    setTimeout(() => {
+                        setIsRolling(false); // End the rolling animation, remove overlay
+                    }, 50); // Small additional delay (e.g., 50ms)
+                }, animationDuration);
+            };
+
+            /**
+             * Calls the Gemini API to get an insight based on the dice value and type.
+             */
+            const getDiceInsight = async () => {
+                setIsLoadingInsight(true);
+                setInsightError('');
+                setDiceInsight(''); // Clear previous insight
+
+                const prompt = `Provide a very short, whimsical, and positive interpretation or fortune for a roll of ${diceValue} on a ${selectedDiceType.type} dice. Make it sound like a fun, lighthearted prediction. Keep it to one sentence.`;
+
+                let chatHistory = [];
+                chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+                const payload = { contents: chatHistory };
+                const apiKey = ""; // Canvas will automatically provide the API key at runtime
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(`API error: ${response.status} - ${errorData.error?.message || 'Unknown error'}`);
+                    }
+
+                    const result = await response.json();
+
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        const text = result.candidates[0].content.parts[0].text;
+                        setDiceInsight(text);
+                    } else {
+                        setInsightError("Could not get a valid insight from the AI. Please try again.");
+                        console.error("Unexpected API response structure:", result);
+                    }
+                } catch (error) {
+                    setInsightError(`Failed to get insight: ${error.message}`);
+                    console.error("Error fetching dice insight:", error);
+                } finally {
+                    setIsLoadingInsight(false);
+                }
+            };
+
+            // Initial roll when the component mounts or dice type changes
+            React.useEffect(() => {
+                rollDice();
+            }, [selectedDiceType]); // Re-roll when selectedDiceType changes
+
+            return (
+                <div className="min-h-screen bg-gradient-to-br from-indigo-800 to-purple-900 flex flex-col items-center justify-center p-4 font-inter text-white">
+                    <h1 className="text-4xl md:text-5xl font-bold mb-8 text-center drop-shadow-lg">
+                        Universal Dice Roller
+                    </h1>
+
+                    {/* Dice Type Selection Buttons */}
+                    <div className="flex flex-wrap justify-center gap-2 mb-8 max-w-full">
+                        {diceTypes.map((dice) => (
+                            <button
+                                key={dice.type}
+                                onClick={() => setSelectedDiceType(dice)}
+                                className={`
+                                    px-4 py-2 rounded-full font-semibold text-sm md:text-base
+                                    transition-all duration-200 ease-in-out
+                                    ${selectedDiceType.type === dice.type
+                                        ? 'bg-emerald-500 text-white shadow-md'
+                                        : 'bg-gray-700 text-gray-300 hover:bg-gray-600 hover:text-white'
+                                    }
+                                    focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-opacity-75
+                                `}
+                                disabled={isRolling || isLoadingInsight}
+                            >
+                                {dice.type.toUpperCase()}
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* Dice Visualization Component */}
+                    <div className={`
+                        relative w-40 h-40 md:w-48 md:h-48 bg-red-600 rounded-2xl shadow-2xl flex items-center justify-center
+                        transition-transform duration-300 ease-out
+                        ${isRolling ? 'animate-spin-fast' : 'transform rotate-0'}
+                    `}>
+                        {/* Visual dice face is rendered only when not rolling */}
+                        {!isRolling && renderDiceFace(diceValue, selectedDiceType.type)}
+                        {/* Overlay for rolling effect */}
+                        {isRolling && (
+                            <div className="absolute inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center rounded-2xl">
+                                <span className="text-3xl font-bold text-white animate-pulse">Rolling...</span>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Result Display Component */}
+                    <div className="mt-8 text-6xl md:text-7xl font-extrabold text-white drop-shadow-lg">
+                        {diceValue}
+                    </div>
+
+                    {/* Roll Button */}
+                    <button
+                        onClick={rollDice}
+                        disabled={isRolling || isLoadingInsight} // Disable button while rolling or getting insight
+                        className={`
+                            mt-12 px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xl rounded-full shadow-lg
+                            transition-all duration-300 ease-in-out transform
+                            ${isRolling || isLoadingInsight ? 'opacity-70 cursor-not-allowed' : 'hover:scale-105 active:scale-95'}
+                            focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50
+                            relative overflow-hidden
+                        `}
+                    >
+                        {isRolling ? (
+                            <span className="flex items-center">
+                                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                Rolling...
+                            </span>
+                        ) : (
+                            `Roll ${selectedDiceType.type.toUpperCase()}`
+                        )}
+                        {/* Button hover effect */}
+                        <span className="absolute inset-0 bg-white opacity-0 transition-opacity duration-300 rounded-full group-hover:opacity-10"></span>
+                    </button>
+
+                    {/* Gemini API Insight Button */}
+                    <button
+                        onClick={getDiceInsight}
+                        disabled={isRolling || isLoadingInsight} // Disable while rolling or loading insight
+                        className={`
+                            mt-4 px-8 py-4 bg-purple-600 hover:bg-purple-700 text-white font-bold text-xl rounded-full shadow-lg
+                            transition-all duration-300 ease-in-out transform
+                            ${isRolling || isLoadingInsight ? 'opacity-70 cursor-not-allowed' : 'hover:scale-105 active:scale-95'}
+                            focus:outline-none focus:ring-4 focus:ring-purple-500 focus:ring-opacity-50
+                            relative overflow-hidden
+                        `}
+                    >
+                        {isLoadingInsight ? (
+                            <span className="flex items-center">
+                                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                Getting Insight...
+                            </span>
+                        ) : (
+                            '✨ Get Dice Insight ✨'
+                        )}
+                        <span className="absolute inset-0 bg-white opacity-0 transition-opacity duration-300 rounded-full group-hover:opacity-10"></span>
+                    </button>
+
+                    {/* Display Dice Insight or Error */}
+                    {(diceInsight || insightError) && (
+                        <div className="mt-8 p-6 bg-gray-800 bg-opacity-70 rounded-xl shadow-xl text-center max-w-md mx-auto">
+                            {diceInsight && (
+                                <p className="text-lg md:text-xl text-yellow-300 font-semibold italic">
+                                    "{diceInsight}"
+                                </p>
+                            )}
+                            {insightError && (
+                                <p className="text-lg md:text-xl text-red-400 font-semibold">
+                                    Error: {insightError}
+                                </p>
+                            )}
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        // Render the App component into the 'root' div
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+</body>
+</html>

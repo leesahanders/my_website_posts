@@ -1,0 +1,59 @@
+---
+title: "Using LLM's to make a text adventure"
+description: ""
+author: "Lisa"
+date: "2025-07-05"
+format:
+  html:
+    code-fold: true
+    code-summary: "Show the code"
+editor: source
+image: "img/text-adventure-space.png"
+draft: false
+freeze: true
+filters:
+   - lightbox
+lightbox: auto
+categories:
+  - code
+  - games
+---
+
+## Project Nightfall Game
+
+<!---{{< include files/bus-jump.html >}}-->
+
+```{=html}
+<iframe
+    src="files/text-adventure-space.html"
+    width="100%"
+    height="1000px"  <!-- Adjust height as needed -->
+    frameborder="0"
+    scrolling="no"
+    allowfullscreen
+></iframe>
+```
+
+## Background 
+
+Various prompts and refinement: 
+`
+```
+Make a text based game that can be accessed from a phone as an application using only open source software. The game should include a puzzle that the player needs to solve and some horror and science fiction themeing. The game should be set in the early days of the space program with the user playing the role of a spy exploring files from the members of the Soviet Russia's space program. The player should have a limited set of files they can access at first. When the player accesses a file it should give the a clue for the next file to access. Not all files should give clues, and some clues will need to be combined across multiple files. The game should have a dramatic ending.
+
+It's too hard to access files. Each file should be accessed with "access <file ID>" but the file ID should be very simple, less than 5 characters
+
+Add a way for the player to see which files they have viewed, which files they haven't viewed, and which files have remaining clues that they haven't acted on (haven't viewed the file that that file has a clue for)
+
+Can you move the text submission field above the list of available files, and sort the available files in descending order
+
+Instead of "access" can the command be "read"
+
+After the player has "read" a file the content of the file should be included below in the "available files" list as a collapsible field. By default it should be collapsed, but should be able to be expanded if the player clicks on it
+
+The content of the message isn't showing up under available files in the expandable field. Please make sure that after the file has been read for the first time the content shows up under the available fields list in an expandable field.
+
+Change the solution to the final puzzle to "The abyss virus is in me" making the reveal as dramatic as possible. Keep as much of the original content as possible.
+```
+
+

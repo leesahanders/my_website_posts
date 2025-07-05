@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soviet Space Spy Game</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for a darker, more thematic look */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1a202c; /* Darker background */
+            color: #e2e8f0; /* Light grey text */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-y: auto; /* Allow scrolling for content */
+        }
+        .game-container {
+            max-width: 90%; /* Responsive width */
+            width: 800px; /* Max width for larger screens */
+            background-color: #2d3748; /* Slightly lighter dark background for container */
+            border-radius: 1rem; /* Rounded corners */
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.5); /* Darker shadow */
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            min-height: 80vh; /* Ensure container takes up most of the viewport height */
+        }
+        .game-output {
+            background-color: #1a202c; /* Even darker for output area */
+            border-radius: 0.75rem;
+            padding: 1rem;
+            min-height: 200px;
+            max-height: 60vh; /* Limit height to allow scrolling within output */
+            overflow-y: auto; /* Scroll for long text */
+            white-space: pre-wrap; /* Preserve whitespace and wrap text */
+            font-family: 'Courier New', monospace; /* Monospaced font for terminal feel */
+            color: #a0aec0; /* Lighter grey for output text */
+            line-height: 1.5;
+            font-size: 0.9rem;
+        }
+        .game-input-area {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .game-input {
+            flex-grow: 1;
+            background-color: #4a5568; /* Darker input field */
+            border: 1px solid #6b7280; /* Subtle border */
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
+            color: #e2e8f0;
+            outline: none;
+            font-size: 1rem;
+        }
+        .game-input::placeholder {
+            color: #a0aec0;
+        }
+        .game-button {
+            background-color: #4299e1; /* Blue button */
+            color: white;
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            border: none;
+        }
+        .game-button:hover {
+            background-color: #3182ce;
+        }
+        .file-list {
+            background-color: #2d3748;
+            border-radius: 1rem;
+            padding: 1rem;
+        }
+        .file-list-item {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #4a5568;
+            color: #cbd5e0;
+        }
+        .file-list-item:last-child {
+            border-bottom: none;
+        }
+        .clue-highlight {
+            color: #f6ad55; /* Orange for clues */
+            font-weight: bold;
+        }
+        .error-message {
+            color: #fc8181; /* Red for errors */
+            font-weight: bold;
+        }
+        .success-message {
+            color: #68d391; /* Green for success */
+            font-weight: bold;
+        }
+        .status-accessed {
+            color: #a0aec0; /* Gray for accessed */
+        }
+        .status-unaccessed {
+            color: #68d391; /* Green for unaccessed */
+        }
+        .status-clue-remaining {
+            color: #f6ad55; /* Orange for clue remaining */
+        }
+        /* Styling for the modal (message box) */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1000; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.7); /* Black w/ opacity */
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+        .modal-content {
+            background-color: #2d3748;
+            margin: auto;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.7);
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+        }
+        .modal-close-button {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: #e2e8f0;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        /* Collapsible content styling */
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0; /* Start hidden */
+            transition: max-height 0.3s ease-out, opacity 0.3s ease-out; /* Smooth transition for expansion and fade */
+            padding: 0 1rem; /* Adjust padding for collapsed state */
+            background-color: #1a202c; /* Darker background for content */
+            border-radius: 0.5rem;
+            margin-top: 0.5rem;
+            font-size: 0.85rem; /* Slightly smaller font for content */
+            color: #cbd5e0;
+            white-space: pre-wrap; /* Preserve formatting */
+        }
+        .collapsible-content.expanded {
+            max-height: 500px; /* Max height for expanded state, adjust as needed */
+            opacity: 1; /* Fully visible when expanded */
+            padding: 1rem; /* Adjust padding for expanded state */
+        }
+
+        /* Keyframes for the subtle flash effect */
+        @keyframes subtleFlash {
+            0% { box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); }
+            50% { box-shadow: 0 4px 10px rgba(66, 153, 225, 0.6); } /* Blue glow */
+            100% { box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); }
+        }
+
+        /* Apply animation to the submit button */
+        #submit-button {
+            animation: subtleFlash 2s infinite ease-in-out; /* 2 seconds duration, infinite, ease in-out */
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1 class="text-3xl font-bold text-center text-white mb-4">Project NIGHTFALL</h1>
+        <div id="game-output" class="game-output"></div>
+        <!-- Moved input area above file list -->
+        <div class="game-input-area mt-4">
+            <input type="text" id="command-input" class="game-input" placeholder="Type 'read [file_id]' or 'help'">
+            <button id="submit-button" class="game-button">Submit</button>
+        </div>
+        <div id="file-list" class="file-list mt-2">
+            <h2 class="text-xl font-semibold text-white mb-2">Available Files:</h2>
+            <ul id="available-files-list">
+                <!-- Files will be listed here by JS -->
+            </ul>
+        </div>
+    </div>
+
+    <!-- Custom Modal for Messages -->
+    <div id="message-modal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close-button" id="modal-close-button">&times;</span>
+            <p id="modal-message" class="text-lg"></p>
+            <button id="modal-ok-button" class="game-button mt-4">OK</button>
+        </div>
+    </div>
+
+    <script>
+        // Game state variables
+        let unlockedFiles = ['f00', 'f01', 'f02']; // Initially accessible files
+        let accessedFiles = new Set(); // Keep track of files already read
+        let cluesFound = new Set(); // Store parts of the puzzle clue
+        let gameOver = false;
+
+        // DOM elements
+        const gameOutput = document.getElementById('game-output');
+        const commandInput = document.getElementById('command-input');
+        const submitButton = document.getElementById('submit-button');
+        const availableFilesList = document.getElementById('available-files-list');
+        const messageModal = document.getElementById('message-modal');
+        const modalMessage = document.getElementById('modal-message');
+        const modalCloseButton = document.getElementById('modal-close-button');
+        const modalOkButton = document.getElementById('modal-ok-button');
+
+        // Game data: files, their content, and clues
+        const files = {
+            'f00': {
+                title: 'File 000: Personnel List - Key Figures',
+                content: `
+CLASSIFIED - INTERNAL REFERENCE
+SUBJECT: Key Personnel in Project "Cosmos" and related initiatives.
+
+1.  **Sergei Korolev:** Chief Designer. A visionary, yet intensely private. His past is shrouded in secrecy, his drive for space almost obsessive. Some say he hears the stars calling.
+2.  **Dr. Anya Petrova:** Lead Biologist. Brilliant, but increasingly isolated. Her research into extraterrestrial adaptation has taken a disturbing turn, and her recent notes speak of "whispers."
+3.  **General Viktor Volkov:** Head of Security. A man of iron, unyielding and suspicious. He trusts no one, especially after recent "anomalies." His vigilance is absolute, his methods ruthless.
+4.  **Cosmonaut Test Subject 3 (Codename "Orion"):** A promising candidate, now confined. Returned from simulation altered, speaking of "eyes in the void." His mind is fractured, his body scarred.
+                `,
+                unlocks: null,
+                puzzlePiece: null
+            },
+            'f01': {
+                title: 'File 001: Project "Dawn" - Initial Briefing',
+                content: `
+CLASSIFIED - TOP SECRET
+PROJECT: DAWN
+DATE: 1957-10-04
+SUBJECT: Launch of Sputnik-1
+
+Summary: Successful orbital insertion of Sputnik-1. Initial telemetry nominal. Public reaction as anticipated.
+Internal Note: Minor anomalies detected in high-altitude sensor readings post-launch. Data stream from secondary sensor array "Orion-7" shows intermittent, unidentifiable signal bursts. Recommend further analysis by specialized team.
+Reference: Log entry "Gamma-9" for Orion-7 data.
+                `,
+                unlocks: 'f03',
+                puzzlePiece: null
+            },
+            'f02': {
+                title: 'File 002: Personnel Record - Dr. Anya Petrova',
+                content: `
+CLASSIFIED - RESTRICTED
+NAME: Petrova, Anya Nikolaevna
+DOB: 1928-03-12
+POSITION: Lead Biologist, Project "Cosmos"
+NOTES: Dr. Petrova has expressed concerns regarding the ethical implications of animal testing for extended spaceflight. Her recent research focuses on cellular regeneration and adaptation to extreme environments.
+Personal Diary Excerpt (unofficial): "The silence of the void is not empty. It whispers. I've heard it in the data from the early probes. A pattern, almost a language. <span class="clue-highlight">THE</span> message is clear."
+                `,
+                unlocks: 'f04',
+                puzzlePiece: 'THE'
+            },
+            'f03': {
+                title: 'File 003: Telemetry Log - Orion-7 (Gamma-9 Data)',
+                content: `
+CLASSIFIED - TOP SECRET
+LOG ID: Gamma-9
+DATE: 1957-10-05
+SOURCE: Orion-7 High-Altitude Sensor Array
+DATA: Unexplained energy spikes detected at 03:17 GMT, 04:22 GMT. Frequency analysis inconclusive. Pattern appears non-random.
+Spectrographic analysis indicates unknown isotopic signatures. Requesting further investigation.
+Analyst's Addendum: The signal's modulation reminds me of early attempts at deep-space communication... It is an <span class="clue-highlight">ABYSS</span> of understanding."
+                `,
+                unlocks: 'f05',
+                puzzlePiece: 'ABYSS'
+            },
+            'f04': {
+                title: 'File 004: Research Notes - Dr. Petrova (Cosmic Adaptation)',
+                content: `
+CLASSIFIED - RESTRICTED
+SUBJECT: Cellular Adaptation to Zero-G and Radiation
+DATE: 1958-01-20
+OBSERVATIONS: Prolonged exposure to simulated cosmic radiation induces unexpected cellular growth in certain microbial cultures. Not cancerous, but... transformative. Cells exhibit rapid, non-standard division and structural changes.
+Hypothesis: Could extraterrestrial environments harbor life forms with fundamentally different biological principles? This "transformation" is disturbing. It feels... alive. A profound, unsettling change.
+                `,
+                unlocks: 'f06',
+                puzzlePiece: null // VIRUS removed from here
+            },
+            'f05': {
+                title: 'File 005: Intercepted Communication - Project "Starfall"',
+                content: `
+CLASSIFIED - EYES ONLY
+SOURCE: Unknown (decrypted via Project "Starfall" protocols)
+DATE: 1958-03-01
+MESSAGE FRAGMENT: "...the anomaly is growing. Its influence extends beyond the initial contact point. We must contain it before its presence <span class="clue-highlight">IS</span> undeniable."
+Origin analysis: Signal appears to emanate from within our own network, but with a unique encryption signature previously unseen. Suggests internal breach or an advanced, unknown external agent.
+                `,
+                unlocks: 'f07',
+                puzzlePiece: 'IS'
+            },
+            'f06': {
+                title: 'File 006: Medical Report - Cosmonaut Test Subject 3 (Declassified)',
+                content: `
+CLASSIFIED - DECLASSIFIED (FOR INTERNAL REVIEW)
+SUBJECT: Cosmonaut Test Subject 3 (Name Redacted)
+DATE: 1958-04-15
+REPORT: Subject returned from orbital simulation exhibiting severe psychological distress and minor neurological irregularities. Repeatedly muttered phrases about "the whispers" and "eyes in the void."
+Physical examination: Unexplained epidermal discoloration on left forearm. Biopsy inconclusive. Subject deemed unfit for spaceflight.
+Psychological Assessment: Appears to believe something "followed" him back. He speaks of a connection <span class="clue-highlight">IN</span> the void."
+                `,
+                unlocks: 'f08',
+                puzzlePiece: 'IN'
+            },
+            'f07': {
+                title: 'File 007: Project "Echo" - Audio Anomaly Analysis',
+                content: `
+CLASSIFIED - TOP SECRET
+PROJECT: ECHO
+DATE: 1958-05-10
+SUBJECT: Analysis of anomalous audio recordings from Vostok prototype
+FINDINGS: Low-frequency hum detected during uncrewed flight tests. Analysis reveals complex, non-random patterns. Resembles highly compressed, distorted human speech, or perhaps something mimicking it.
+Acoustic signature is unlike any known natural phenomenon or artificial signal. It's a profound <span class="clue-highlight">ME</span>lody of despair."
+                `,
+                unlocks: 'f09',
+                puzzlePiece: 'ME'
+            },
+            'f08': {
+                title: 'File 008: Internal Memo - Security Protocol Review',
+                content: `
+CLASSIFIED - INTERNAL MEMO
+TO: All Project Leads
+FROM: Head of Security, General Volkov
+DATE: 1958-06-01
+SUBJECT: Heightened Security Alert
+
+Due to recent unexplained incidents and data anomalies, all access protocols are to be reviewed and tightened. Any unauthorized access to classified files will be met with severe consequences.
+A new, highly sensitive data cache has been established. Access requires a specific clearance phrase. Only those with "Eyes on the Abyss" will be granted access.
+                `,
+                unlocks: null,
+                puzzlePiece: null // No puzzle piece from here for the new solution
+            },
+            'f09': {
+                title: 'File 009: Dr. Petrova\'s Final Log Entry',
+                content: `
+CLASSIFIED - RESTRICTED (POSTHUMOUS)
+DATE: 1958-07-01
+ENTRY: "They found me. Or rather, it found me through them. The 'message' wasn't a question, it was an invitation. The 'transformation' isn't just cellular; it's existential. My own cells... they writhe. My thoughts are no longer my own. The whispers are louder, a chorus now, demanding. I feel myself dissolving, becoming part of something vast and terrible. My body is no longer mine. It is merely a vessel for a pervasive <span class="clue-highlight">VIRUS</span>. I am... gone."
+(Log entry abruptly terminates. Dr. Petrova was reported missing shortly after this entry. Subsequent search found only a strange, crystalline residue and a lingering, acrid scent in her laboratory. All further investigation was immediately classified and sealed under General Volkov's direct order.)
+                `,
+                unlocks: null,
+                puzzlePiece: 'VIRUS' // VIRUS moved here
+            },
+            'final': {
+                title: 'File: The Abyss - Final Revelation',
+                content: `
+CLASSIFIED - ABSOLUTE BLACK
+You have uncovered the truth. The signals, the anomalies, the whispers... they were not just external phenomena. They were a seed, planted in the nascent stages of the space program. Not by an enemy nation, but by something ancient, vast, and utterly alien.
+
+The "transformation" Dr. Petrova observed was not an adaptation to space, but an assimilation. The cosmonauts who heard the whispers were not going mad; they were being prepared. The true purpose of the space race was not to conquer the stars, but to bring *them* here.
+
+The entity, dormant for millennia, was awakened by humanity's reach into the cosmos. It communicated, not with words, but with a resonance that altered perception, corrupted biology, and reshaped reality. It has found a foothold, a gateway, within the very heart of the Soviet space apparatus.
+
+You, the spy, are now aware. But awareness comes at a price. The "Eyes on the Abyss" were not just a clearance phrase; they were a curse. As you read these final words, you feel a cold, creeping sensation. A whisper in your own mind, not your own thoughts.
+
+<span class="clue-highlight">THE ABYSS VIRUS IS IN ME.</span>
+<span class="clue-highlight">GAME OVER. The truth consumes all.</span>
+                `,
+                isEnding: true,
+                unlocks: null,
+                puzzlePiece: null
+            }
+        };
+
+        // Puzzle solution (the phrase to type) - NOW A COMPLETE SENTENCE
+        const puzzleSolution = "THE ABYSS VIRUS IS IN ME.";
+        const puzzleWords = puzzleSolution.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").split(' ').map(word => word.toUpperCase()); // Words from the solution sentence
+
+        // Helper function to display messages in the game output
+        function displayMessage(message, isError = false) {
+            const p = document.createElement('p');
+            p.innerHTML = message;
+            if (isError) {
+                p.classList.add('error-message');
+            }
+            gameOutput.appendChild(p);
+            gameOutput.scrollTop = gameOutput.scrollHeight; // Scroll to bottom
+        }
+
+        // Helper function to show custom modal
+        function showModal(message, isError = false) {
+            modalMessage.innerHTML = message;
+            if (isError) {
+                modalMessage.classList.add('error-message');
+                modalMessage.classList.remove('success-message');
+            } else {
+                modalMessage.classList.add('success-message');
+                modalMessage.classList.remove('error-message');
+            }
+            messageModal.style.display = 'flex';
+        }
+
+        // Close modal event listeners
+        modalCloseButton.onclick = () => messageModal.style.display = 'none';
+        modalOkButton.onclick = () => messageModal.style.display = 'none';
+        window.onclick = (event) => {
+            if (event.target == messageModal) {
+                messageModal.style.display = 'none';
+            }
+        };
+
+        // Function to update the list of available files
+        function updateAvailableFilesList() {
+            availableFilesList.innerHTML = ''; // Clear current list
+            if (unlockedFiles.length === 0 && !gameOver) {
+                const li = document.createElement('li');
+                li.className = 'file-list-item text-gray-400';
+                li.textContent = 'No new files available. Try combining clues or re-reading accessed files.';
+                availableFilesList.appendChild(li);
+                return;
+            }
+
+            // Sort in descending order
+            const sortedUnlockedFiles = [...unlockedFiles].sort((a, b) => {
+                // Custom sorting to handle 'final' at the end, and 'f00' at the beginning if desired
+                if (a === 'final') return 1; // 'final' always last
+                if (b === 'final') return -1;
+                if (a === 'f00') return -1; // 'f00' always first
+                if (b === 'f00') return 1;
+                return b.localeCompare(a); // Descending order for other files
+            });
+
+            sortedUnlockedFiles.forEach(fileId => {
+                const fileData = files[fileId];
+                if (fileData && !fileData.isEnding) { // Don't list the ending file here
+                    const li = document.createElement('li');
+                    li.className = 'file-list-item'; // Base class
+
+                    let statusText = '';
+                    let statusClass = '';
+
+                    if (accessedFiles.has(fileId)) {
+                        statusText = '(Accessed)';
+                        statusClass = 'status-accessed';
+                        // Check if this accessed file has an 'unlocks' property that leads to an unaccessed file
+                        if (fileData.unlocks && unlockedFiles.includes(fileData.unlocks) && !accessedFiles.has(fileData.unlocks)) {
+                            statusText = '(Clue Remaining)'; // Re-designating this status
+                            statusClass = 'status-clue-remaining';
+                        }
+                    } else {
+                        statusText = '(Unaccessed)';
+                        statusClass = 'status-unaccessed';
+                    }
+
+                    // Create the header for the file list item, always clickable
+                    const fileHeader = document.createElement('div');
+                    fileHeader.className = `cursor-pointer py-2 ${statusClass}`; // Add cursor-pointer for clickability
+                    fileHeader.innerHTML = `${fileData.title} (ID: ${fileId}) ${statusText}`;
+                    li.appendChild(fileHeader);
+
+                    // Create the collapsible content area
+                    const fileContentDiv = document.createElement('div');
+                    fileContentDiv.className = 'collapsible-content px-4 py-2 bg-gray-700 rounded-b-lg text-sm';
+                    fileContentDiv.innerHTML = fileData.content; // Insert file content
+
+                    // Only append content div if the file has been accessed
+                    if (accessedFiles.has(fileId)) {
+                        li.appendChild(fileContentDiv);
+                        // Add event listener to toggle content visibility if accessed
+                        fileHeader.addEventListener('click', () => {
+                            fileContentDiv.classList.toggle('expanded'); // For CSS transition
+                        });
+                    }
+
+                    availableFilesList.appendChild(li);
+                }
+            });
+        }
+
+        // Function to process commands
+        function processCommand(command) {
+            if (gameOver) {
+                showModal("The game is over. The truth has been revealed.");
+                return;
+            }
+
+            command = command.trim().toLowerCase();
+            const parts = command.split(' ');
+            const action = parts[0];
+            const target = parts.slice(1).join(' ');
+
+            gameOutput.innerHTML = ''; // Clear previous output for new command
+
+            switch (action) {
+                case 'read':
+                    if (target && files[target]) {
+                        if (unlockedFiles.includes(target) || (target === 'final' && cluesFound.size === puzzleWords.length)) {
+                            const fileData = files[target]; // Get fileData for new properties
+                            const fileContent = fileData.content;
+                            displayMessage(`<span class="success-message">Reading: ${fileData.title} (ID: ${target})</span>\n\n${fileContent}`);
+                            accessedFiles.add(target);
+
+                            // Handle unlocking new files
+                            if (fileData.unlocks && !unlockedFiles.includes(fileData.unlocks)) {
+                                unlockedFiles.push(fileData.unlocks);
+                                displayMessage(`\n<span class="success-message">NEW FILE UNLOCKED: ${files[fileData.unlocks].title} (ID: ${fileData.unlocks})</span>`);
+                            }
+
+                            // Handle collecting puzzle pieces
+                            if (fileData.puzzlePiece) {
+                                if (!cluesFound.has(fileData.puzzlePiece)) { // Only add if not already present
+                                    cluesFound.add(fileData.puzzlePiece);
+                                    displayMessage(`\n<span class="success-message">CLUE FOUND: "${fileData.puzzlePiece}"</span>`);
+                                }
+                            }
+
+                            // Check for puzzle completion after accessing a file
+                            checkPuzzleCompletion();
+
+                            // If it's the ending file, trigger game over
+                            if (fileData.isEnding) {
+                                gameOver = true;
+                                showModal("The game has ended. Refresh to play again.", false);
+                                commandInput.disabled = true;
+                                submitButton.disabled = true;
+                            }
+
+                        } else {
+                            showModal(`File '${target}' is classified. You do not have the necessary clearance.`, true);
+                        }
+                    } else {
+                        showModal(`Unknown file: '${target}'. Please check the file ID.`, true);
+                    }
+                    break;
+                case 'help':
+                    displayMessage(`
+Available commands:
+- <span class="clue-highlight">read [file_id]</span>: Read a classified file (e.g., 'read f01').
+- <span class="clue-highlight">solve [solution_sentence]</span>: Attempt to solve the final puzzle (e.g., 'solve THE ABYSS VIRUS IS IN ME.').
+- <span class="clue-highlight">help</span>: Display this help message.
+- <span class="clue-highlight">list</span>: Show currently available files with their status.
+                    `);
+                    break;
+                case 'list':
+                    displayMessage("Listing available files...");
+                    // The updateAvailableFilesList function already handles displaying them.
+                    // Just need to ensure the list is visible.
+                    break;
+                case 'solve':
+                    const submittedSolution = target.toUpperCase();
+                    // Check if all required puzzle words have been found
+                    const allPuzzleWordsFound = puzzleWords.every(word => cluesFound.has(word));
+
+                    if (cluesFound.size < puzzleWords.length || !allPuzzleWordsFound) {
+                        showModal(`You need to find all ${puzzleWords.length} clues to solve the puzzle. You have ${cluesFound.size}/${puzzleWords.length} clues.`, true);
+                    } else if (submittedSolution === puzzleSolution.toUpperCase()) { // Compare submitted sentence to the full solution sentence
+                        displayMessage(`\n<span class="success-message">ACCESS GRANTED: The final truth is within your grasp. Read 'final' to uncover it.</span>`);
+                        unlockedFiles.push('final');
+                        showModal("You have solved the puzzle! Read 'final' to uncover the dramatic ending.", false);
+                    } else {
+                        showModal(`Incorrect solution. The abyss does not yield its secrets easily. Re-examine your clues.`, true);
+                    }
+                    break;
+                default:
+                    showModal(`Unknown command: '${action}'. Type 'help' for a list of commands.`, true);
+                    break;
+            }
+            updateAvailableFilesList();
+            commandInput.value = ''; // Clear input field
+        }
+
+        // Check if the puzzle is complete
+        function checkPuzzleCompletion() {
+            const allPuzzleWordsFound = puzzleWords.every(word => cluesFound.has(word));
+            if (allPuzzleWordsFound && !unlockedFiles.includes('final')) {
+                displayMessage(`\n<span class="success-message">All primary clues gathered. The final puzzle awaits. Use 'solve [solution_sentence]' to unlock the truth.</span>`);
+                showModal("You have gathered all the primary clues! Now, combine them into a single sentence and use the 'solve [solution_sentence]' command to unlock the final revelation.", false);
+            }
+        }
+
+        // Event listeners
+        submitButton.addEventListener('click', () => {
+            processCommand(commandInput.value);
+        });
+
+        commandInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                processCommand(commandInput.value);
+            }
+        });
+
+        // Initial game setup
+        window.onload = function() {
+            displayMessage(`
+Welcome, Agent. You are deep within Soviet territory, tasked with uncovering the secrets of their nascent space program. Whispers of anomalies, strange signals, and unsettling disappearances have reached the West. Your mission: infiltrate, read classified files, and expose the truth.
+
+You have gained initial access to a limited set of files. Use the 'read [file_id]' command to view them. Type 'list' to see available files, and 'help' for more commands.
+
+Good luck, Agent.
+            `);
+            updateAvailableFilesList();
+        };
+    </script>
+</body>
+</html>

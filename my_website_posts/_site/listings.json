@@ -12,6 +12,9 @@
       "/posts/vortico rockets.html",
       "/posts/maverick cubby holder.html",
       "/posts/kettle automation.html",
+      "/posts/text-adventure-space.html",
+      "/posts/bus-jump.html",
+      "/posts/dice-roller.html",
       "/index.html",
       "/posts.html",
       "/about.html"
@@ -20,6 +23,9 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/bus-jump.html",
+      "/posts/dice-roller.html",
+      "/posts/text-adventure-space.html",
       "/posts/kettle automation.html",
       "/posts/maverick cubby holder.html",
       "/posts/vortico rockets.html",
@@ -35,6 +41,9 @@
   {
     "listing": "/posts.html",
     "items": [
+      "/posts/bus-jump.html",
+      "/posts/dice-roller.html",
+      "/posts/text-adventure-space.html",
       "/posts/kettle automation.html",
       "/posts/maverick cubby holder.html",
       "/posts/vortico rockets.html",

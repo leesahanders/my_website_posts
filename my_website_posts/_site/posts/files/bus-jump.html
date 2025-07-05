@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Denver RTD Magic Bus Jump</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Import a playful font */
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Fredoka One', cursive; /* Playful font */
+            overflow: hidden; /* Prevent scrollbars */
+            background-color: #F0F8FF; /* Alice Blue - soft background */
+        }
+        canvas {
+            background-color: #AEC6CF; /* Soft blue sky */
+            border-radius: 20px; /* More rounded corners */
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25); /* Softer, larger shadow */
+            touch-action: manipulation; /* Improve touch responsiveness */
+            border: 4px solid #6A5ACD; /* Purple border for a magical touch */
+            display: block; /* Ensure canvas takes up space */
+        }
+        .ground {
+            background-color: #8B4513; /* Earthy brown for ground */
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 50px;
+            border-top: 4px solid #6A5ACD; /* Matching border */
+        }
+        .message-box, .start-screen {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(106, 90, 205, 0.95); /* Semi-transparent purple */
+            color: white;
+            padding: 30px;
+            border-radius: 20px; /* Rounded */
+            text-align: center;
+            z-index: 1000;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            border: 3px solid #FFD700; /* Gold border */
+        }
+        .message-box button, .start-screen button {
+            background-color: #FFD700; /* Gold button */
+            color: #6A5ACD; /* Purple text */
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px; /* Rounded button */
+            cursor: pointer;
+            margin-top: 20px;
+            font-size: 1.2em;
+            font-family: 'Fredoka One', cursive;
+            box-shadow: 3px 3px 0px rgba(0,0,0,0.3);
+            transition: background-color 0.2s ease;
+        }
+        .message-box button:hover, .start-screen button:hover {
+            background-color: #FFC107; /* Slightly darker gold on hover */
+        }
+        .game-info-panel {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-family: 'Fredoka One', cursive;
+        }
+        .info-item {
+            background-color: #6A5ACD; /* Purple background */
+            color: white;
+            padding: 8px 16px;
+            border-radius: 9999px; /* Pill shape */
+            font-size: 1.2em; /* Slightly smaller for multiple items */
+            font-weight: bold;
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+    <div class="relative w-full max-w-xl h-96 bg-white rounded-xl shadow-lg overflow-hidden flex flex-col items-center justify-center">
+        <!-- Game Container - initially hidden -->
+        <div id="gameContainer" class="w-full h-full hidden">
+            <canvas id="gameCanvas" class="w-full h-full"></canvas>
+            <div class="ground"></div>
+            <div class="game-info-panel">
+                <div id="scoreDisplay" class="info-item">Score: 0</div>
+                <div id="timerDisplay" class="info-item">Time: 0s</div>
+                <div id="topScoreDisplay" class="info-item">Top Score: 0</div>
+            </div>
+        </div>
+
+        <!-- Start Screen -->
+        <div id="startScreen" class="start-screen">
+            <h1 class="text-4xl font-bold mb-4">Magic Bus Jump!</h1>
+            <p class="text-lg mb-6">Avoid obstacles for 10 seconds to win!</p>
+            <button id="playButton">Play Game</button>
+        </div>
+
+        <!-- Message Box (Game Over/Win) -->
+        <div id="messageBox" class="message-box hidden">
+            <p id="messageText" class="text-3xl font-bold mb-4"></p>
+            <button id="restartButton">Play Again!</button>
+        </div>
+    </div>
+
+    <script>
+        // Get canvas and context
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const timerDisplay = document.getElementById('timerDisplay');
+        const topScoreDisplay = document.getElementById('topScoreDisplay');
+        const messageBox = document.getElementById('messageBox');
+        const messageText = document.getElementById('messageText');
+        const restartButton = document.getElementById('restartButton');
+        const gameContainer = document.getElementById('gameContainer'); // New game container
+        const startScreen = document.getElementById('startScreen');     // New start screen
+        const playButton = document.getElementById('playButton');       // New play button
+
+        // Game variables (adjusted for easier play)
+        let bus = {
+            x: 50,
+            y: 0, // Relative to ground
+            width: 90, // Slightly wider bus
+            height: 50, // Slightly taller bus
+            velocityY: 0,
+            gravity: 0.7, // Reduced gravity for floatier jumps
+            jumpStrength: -18, // Stronger jump
+            isJumping: false,
+            groundY: 50 // Distance from bottom of canvas
+        };
+
+        let obstacles = [];
+        let score = 0;
+        let topScore = 0; // New variable for top score
+        let gameOver = false;
+        let gameFrame = 0;
+        let currentSeconds = 0; // New variable for current game time in seconds
+        let obstacleSpawnInterval = 150; // Increased interval for fewer obstacles
+        let obstacleSpeed = 4; // Reduced obstacle speed
+        const WIN_TIME_SECONDS = 10; // Time in seconds to win
+        const FPS = 60; // Assuming 60 frames per second
+        const WIN_GAME_FRAME = WIN_TIME_SECONDS * FPS; // Frames to win
+
+        // Adjust canvas size to fit parent
+        function resizeCanvas() {
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            bus.y = canvas.height - bus.height - bus.groundY; // Set initial bus Y position
+            draw(); // Redraw after resize
+        }
+
+        // Draw rounded rectangle helper
+        function roundRect(x, y, width, height, radius) {
+            ctx.beginPath();
+            ctx.moveTo(x + radius, y);
+            ctx.lineTo(x + width - radius, y);
+            ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+            ctx.lineTo(x + width, y + height - radius);
+            // FIX: Changed 'quadraticCurveCurveTo' to 'quadraticCurveTo'
+            ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+            ctx.lineTo(x + radius, y + height);
+            ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+            ctx.lineTo(x, y + radius);
+            ctx.quadraticCurveTo(x, y, x + radius, y);
+            ctx.closePath();
+        }
+
+        // Draw bus without eyes and mouth (fluffy style)
+        function drawBus() {
+            // Bus body (rounded yellow)
+            ctx.fillStyle = '#FFD700'; // Gold/Yellow for RTD bus
+            ctx.strokeStyle = '#6A5ACD'; // Purple outline
+            ctx.lineWidth = 3;
+            roundRect(bus.x, bus.y, bus.width, bus.height, 15); // Rounded corners
+            ctx.fill();
+            ctx.stroke();
+
+            // Wheels (darker, rounded)
+            ctx.fillStyle = '#333';
+            ctx.beginPath();
+            ctx.arc(bus.x + 20, bus.y + bus.height - 5, 12, 0, Math.PI * 2); // Front wheel
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(bus.x + bus.width - 20, bus.y + bus.height - 5, 12, 0, Math.PI * 2); // Back wheel
+            ctx.fill();
+
+            // Windows (light blue, rounded)
+            ctx.fillStyle = '#ADD8E6'; // Light blue
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 1;
+            roundRect(bus.x + 10, bus.y + 8, 25, 18, 5); ctx.fill(); ctx.stroke();
+            roundRect(bus.x + 45, bus.y + 8, 25, 18, 5); ctx.fill(); ctx.stroke();
+        }
+
+        // Draw obstacles (fluffy style)
+        function drawObstacle(obstacle) {
+            ctx.fillStyle = '#7CFC00'; // Lawn Green - brighter green
+            ctx.strokeStyle = '#3CB371'; // Medium Sea Green - darker outline
+            ctx.lineWidth = 3;
+
+            // Draw a series of overlapping circles to make a "fluffy" bush shape
+            ctx.beginPath();
+            ctx.arc(obstacle.x + obstacle.width / 2, obstacle.y + obstacle.height, obstacle.width / 2, 0, Math.PI * 2);
+            ctx.arc(obstacle.x + obstacle.width * 0.75, obstacle.y + obstacle.height * 0.7, obstacle.width * 0.4, 0, Math.PI * 2);
+            ctx.arc(obstacle.x + obstacle.width * 0.25, obstacle.y + obstacle.height * 0.7, obstacle.width * 0.4, 0, Math.PI * 2);
+            ctx.arc(obstacle.x + obstacle.width / 2, obstacle.y + obstacle.height * 0.4, obstacle.width * 0.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            // Add a small brown "trunk" if it's a tree-like obstacle
+            ctx.fillStyle = '#A0522D'; // Sienna
+            ctx.strokeStyle = '#8B4513';
+            ctx.lineWidth = 2;
+            roundRect(obstacle.x + obstacle.width / 2 - 5, obstacle.y + obstacle.height, 10, 20, 3);
+            ctx.fill();
+            ctx.stroke();
+        }
+
+        // Draw a rainbow in the sky - less jarring
+        function drawRainbow() {
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height * 0.8; // Position it higher in the sky
+            const colors = [
+                'rgba(255, 0, 0, 0.4)',    // Red
+                'rgba(255, 165, 0, 0.4)',  // Orange
+                'rgba(255, 255, 0, 0.4)',  // Yellow
+                'rgba(0, 128, 0, 0.4)',    // Green
+                'rgba(0, 0, 255, 0.4)',    // Blue
+                'rgba(75, 0, 130, 0.4)',   // Indigo
+                'rgba(238, 130, 238, 0.4)' // Violet
+            ]; // ROYGBIV with reduced opacity
+            const baseRadius = 150;
+            const bandWidth = 15;
+
+            ctx.save(); // Save current canvas state
+
+            for (let i = 0; i < colors.length; i++) {
+                ctx.beginPath();
+                ctx.strokeStyle = colors[i];
+                ctx.lineWidth = bandWidth;
+                ctx.arc(centerX, centerY, baseRadius + (i * bandWidth), Math.PI, 2 * Math.PI, false); // Draw arc from left to right
+                ctx.stroke();
+            }
+            ctx.restore(); // Restore canvas state
+        }
+
+        // Update game state
+        function update() {
+            if (gameOver) return;
+
+            // Update bus position
+            bus.velocityY += bus.gravity;
+            bus.y += bus.velocityY;
+
+            // Prevent bus from going below ground
+            if (bus.y >= canvas.height - bus.height - bus.groundY) {
+                bus.y = canvas.height - bus.height - bus.groundY;
+                bus.velocityY = 0;
+                bus.isJumping = false;
+            }
+
+            // Update game frame and timer
+            gameFrame++;
+            currentSeconds = Math.floor(gameFrame / FPS);
+            timerDisplay.textContent = `Time: ${currentSeconds}s`;
+
+            // Spawn obstacles
+            if (gameFrame % obstacleSpawnInterval === 0) {
+                const obstacleHeight = Math.random() * 30 + 40; // Random height between 40 and 70
+                obstacles.push({
+                    x: canvas.width,
+                    y: canvas.height - obstacleHeight - bus.groundY,
+                    width: 40, // Slightly wider obstacles
+                    height: obstacleHeight
+                });
+            }
+
+            // Update obstacles and check for collision
+            for (let i = 0; i < obstacles.length; i++) {
+                let obstacle = obstacles[i];
+                obstacle.x -= obstacleSpeed;
+
+                // Collision detection (AABB)
+                // Added a small padding to make collision detection slightly more forgiving
+                const padding = 5;
+                if (bus.x + padding < obstacle.x + obstacle.width - padding &&
+                    bus.x + bus.width - padding > obstacle.x + padding &&
+                    bus.y + padding < obstacle.y + obstacle.height - padding &&
+                    bus.y + bus.height - padding > obstacle.y + padding) {
+                    // Collision detected
+                    endGame();
+                    return; // Stop game loop if collision
+                }
+
+                // Remove off-screen obstacles and update score
+                if (obstacle.x + obstacle.width < bus.x && !obstacle.passed) {
+                    score++;
+                    scoreDisplay.textContent = `Score: ${score}`;
+                    obstacle.passed = true; // Mark as passed to avoid multiple scores
+                }
+
+                if (obstacle.x + obstacle.width < 0) {
+                    obstacles.splice(i, 1);
+                    i--; // Adjust index after removal
+                }
+            }
+
+            // Check for win condition
+            if (gameFrame >= WIN_GAME_FRAME) {
+                winGame();
+            }
+        }
+
+        // Draw everything
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas
+            drawRainbow(); // Draw rainbow first so it's behind other elements
+            drawBus();
+            obstacles.forEach(drawObstacle);
+        }
+
+        // Game loop
+        function gameLoop() {
+            update();
+            draw();
+            if (!gameOver) {
+                requestAnimationFrame(gameLoop);
+            }
+        }
+
+        // Handle jump input
+        function handleJump() {
+            if (!bus.isJumping && !gameOver) {
+                bus.velocityY = bus.jumpStrength;
+                bus.isJumping = true;
+            }
+        }
+
+        // End game (lose)
+        function endGame() {
+            gameOver = true;
+            // Update top score if current score is higher
+            if (score > topScore) {
+                topScore = score;
+                topScoreDisplay.textContent = `Top Score: ${topScore}`;
+            }
+            messageText.textContent = `Game Over! Your Score: ${score}`;
+            messageBox.classList.remove('hidden'); // Show message box
+        }
+
+        // Win game
+        function winGame() {
+            gameOver = true;
+            // Update top score if current score is higher
+            if (score > topScore) {
+                topScore = score;
+                topScoreDisplay.textContent = `Top Score: ${topScore}`;
+            }
+            messageText.textContent = `You Won! Score: ${score}`;
+            messageBox.classList.remove('hidden'); // Show message box
+        }
+
+        // Restart game
+        function restartGame() {
+            gameOver = false;
+            score = 0;
+            scoreDisplay.textContent = `Score: 0`;
+            currentSeconds = 0; // Reset timer
+            timerDisplay.textContent = `Time: 0s`; // Update display
+            obstacles = [];
+            bus.y = canvas.height - bus.height - bus.groundY;
+            bus.velocityY = 0;
+            bus.isJumping = false;
+            gameFrame = 0; // Reset game frame for timer
+            messageBox.classList.add('hidden'); // Hide message box
+            gameLoop();
+        }
+
+        // Start game function (called by Play button)
+        function startGame() {
+            startScreen.classList.add('hidden'); // Hide start screen
+            gameContainer.classList.remove('hidden'); // Show game container
+            resizeCanvas(); // Ensure canvas is correctly sized
+            restartGame(); // Start the game logic
+        }
+
+        // Event listeners
+        window.addEventListener('resize', resizeCanvas);
+        canvas.addEventListener('click', handleJump);
+        canvas.addEventListener('touchstart', handleJump); // For mobile touch
+        restartButton.addEventListener('click', restartGame);
+        playButton.addEventListener('click', startGame); // New: Play button listener
+
+        // Initial setup - only resize canvas, don't start game immediately
+        window.onload = function() {
+            // Load top score from local storage if available (for persistence across sessions)
+            // For this prototype, we'll keep it in memory for the current session only.
+            // If you want persistence, you'd add:
+            // const storedTopScore = localStorage.getItem('magicBusTopScore');
+            // if (storedTopScore) {
+            //     topScore = parseInt(storedTopScore);
+            // }
+            topScoreDisplay.textContent = `Top Score: ${topScore}`; // Display initial top score
+            resizeCanvas(); // Initial resize for canvas
+            // Game will start only after playButton is clicked
+        };
+    </script>
+</body>
+</html>
